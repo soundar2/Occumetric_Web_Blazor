@@ -4,7 +4,6 @@
 <h3>Industries</h3>
 
 <p><b>@_errorMessage</b></p>
-<a href="/industries/create">Create New Industry</a>
 
 <h3>Result</h3>
 @if (_industryViewModels?.Count > 0)
@@ -25,7 +24,7 @@
                         @item.Name
                     </td>
                     <td>
-                        <a href="" class="btn btn-primary">Edit</a>
+                        <a href="@($"/industries/update/{item.Guid}")" class="btn btn-primary">Edit</a>
                     </td>
                 </tr>
             }
@@ -44,10 +43,10 @@ else
     {
         base.OnInitialized();
         _industryViewModels = new List<IndustryViewModel>();
-        FetchData();
+        await FetchData();
 
     }
-    private async void FetchData()
+    private async Task FetchData()
     {
         try
         {

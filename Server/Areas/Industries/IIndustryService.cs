@@ -5,8 +5,12 @@ namespace Occumetric.Server.Areas.Industries
 {
     public interface IIndustryService
     {
-        List<IndustryViewModel> GetIndustries();
+        List<IndustryViewModel> Index();
 
-        string CreateIndustry(CreateIndustryDto dto);
+        IndustryViewModel Get(string guid);
+
+        string Create(CreateIndustryDto dto);
+
+        void Update(UpdateIndustryDto dto);
     }
 }

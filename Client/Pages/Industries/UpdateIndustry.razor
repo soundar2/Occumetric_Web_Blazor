@@ -1,0 +1,44 @@
+﻿@page "/industries/update/{guid}"
+@using Occumetric.Shared
+@inject HttpClient _httpClient
+<h3>Edit Industry</h3>
+
+<EditForm Model="_updateIndustryDto" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label for="_editIndustryDto.Name">Name:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="_updateIndustryDto.Name"></InputText>
+            <ValidationMessage For="@(() => _updateIndustryDto.Name)" />
+        </div>
+        <b>
+            @_updateIndustryDto.Name
+        </b>
+    </div>
+    <button class="btn btn-primary" type="submit">Save Changes</button>
+    <br />
+    <b>@guid</b>
+    <br />
+    <b>@_errorMessage</b>
+    <br />
+</EditForm>
+@code {
+    [Parameter] public string guid { get; set; }
+    private UpdateIndustryDto _updateIndustryDto { get; set; }
+    private string _errorMessage = "error";
+    private async void OnValidSubmit()
+    {
+        await Task.Delay(1);
+    }
+    protected async override void OnInitialized()
+    {
+        base.OnInitialized();
+        var vm = await _httpClient.GetFromJsonAsync<IndustryViewModel>($"api/v1/industry/{guid}");
+        _updateIndustryDto = new UpdateIndustryDto
+        {
+            Guid = vm.Guid,
+            Name = vm.Name
+        };
+
+    }
+}
