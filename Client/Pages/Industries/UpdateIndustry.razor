@@ -1,6 +1,7 @@
 ﻿@page "/industries/update/{guid}"
 @using Occumetric.Shared
 @inject HttpClient _httpClient
+@inject NavigationManager _navigationManager
 <h3>Edit Industry</h3>
 
 <EditForm Model="_updateIndustryDto" OnValidSubmit="OnValidSubmit">
@@ -24,11 +25,15 @@
 </EditForm>
 @code {
     [Parameter] public string guid { get; set; }
-    private UpdateIndustryDto _updateIndustryDto { get; set; }
+    private UpdateIndustryDto _updateIndustryDto { get; set; } = new UpdateIndustryDto();
     private string _errorMessage = "error";
     private async void OnValidSubmit()
     {
-        await Task.Delay(1);
+        var response = await _httpClient.PutAsJsonAsync<UpdateIndustryDto>("api/v1/industry", _updateIndustryDto);
+        if (response.IsSuccessStatusCode)
+        {
+            _navigationManager.NavigateTo("/industries");
+        }
     }
     protected async override void OnInitialized()
     {
@@ -39,6 +44,7 @@
             Guid = vm.Guid,
             Name = vm.Name
         };
+        StateHasChanged();
 
     }
 }

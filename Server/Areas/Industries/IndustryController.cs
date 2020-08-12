@@ -36,7 +36,7 @@ namespace Occumetric.Server.Areas.Industries
         {
             try
             {
-                var result = await Task.Run(() => _industryService.Get());
+                var result = await Task.Run(() => _industryService.Get(guid));
                 return Ok(result);
             }
             catch (Exception e)
