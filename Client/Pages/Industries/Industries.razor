@@ -1,0 +1,65 @@
+﻿@page "/industries"
+@using Occumetric.Shared
+@inject HttpClient _httpClient
+<h3>Industries</h3>
+
+<p><b>@_errorMessage</b></p>
+<a href="/industries/create">Create New Industry</a>
+
+<h3>Result</h3>
+@if (_industryViewModels?.Count > 0)
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Edit</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in _industryViewModels)
+            {
+                <tr>
+                    <td>
+                        @item.Name
+                    </td>
+                    <td>
+                        <a href="" class="btn btn-primary">Edit</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>There are no records to show.</p>
+}
+@code {
+    private List<IndustryViewModel> _industryViewModels { get; set; }
+    private string _errorMessage = "test";
+
+    protected async override void OnInitialized()
+    {
+        base.OnInitialized();
+        _industryViewModels = new List<IndustryViewModel>();
+        FetchData();
+
+    }
+    private async void FetchData()
+    {
+        try
+        {
+            _industryViewModels = await _httpClient.GetFromJsonAsync<List<IndustryViewModel>>("api/v1/industry");
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Exception");
+            Console.WriteLine(e.Message);
+            _errorMessage = e.Message;
+
+        }
+    }
+}
