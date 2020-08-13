@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Occumetric.Client.Helpers;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -20,6 +21,7 @@ namespace Occumetric.Client
             // Supply HttpClient instances that include access tokens when making requests to the
             // server project
             builder.Services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("Occumetric.ServerAPI"));
+            builder.Services.AddTransient<ICommonHttpService, CommonHttpService>();
 
             builder.Services.AddApiAuthorization();
 

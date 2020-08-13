@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 namespace Occumetric.Server.Areas.Industries
 {
     [Microsoft.AspNetCore.Mvc.Route("api/v1/tenant")]
+    [AllowAnonymous]
     public class TenantController : ApiController
     {
         private readonly ITenantService _tenantService;
@@ -18,12 +19,12 @@ namespace Occumetric.Server.Areas.Industries
             _tenantService = tenantService;
         }
 
-        [HttpGet("{industryGuid}")]
-        public async Task<IActionResult> Index(int industryId)
+        [HttpGet("industry/{IndustryId}")]
+        public async Task<IActionResult> Index([FromRoute] int IndustryId)
         {
             try
             {
-                var result = await Task.Run(() => _tenantService.Index(industryId));
+                var result = await Task.Run(() => _tenantService.Index(IndustryId));
                 return Ok(result);
             }
             catch (Exception e)
@@ -33,7 +34,7 @@ namespace Occumetric.Server.Areas.Industries
         }
 
         [HttpGet("{Id}")]
-        public async Task<IActionResult> Get(int Id)
+        public async Task<IActionResult> Get([FromRoute] int Id)
         {
             try
             {

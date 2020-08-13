@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Occumetric.Server.Areas.Shared;
 using Occumetric.Shared;
@@ -8,6 +9,8 @@ using System.Threading.Tasks;
 namespace Occumetric.Server.Areas.Industries
 {
     [Microsoft.AspNetCore.Mvc.Route("api/v1/industry")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [ApiController]
     public class IndustryController : ApiController
     {
         private readonly IIndustryService _industryService;

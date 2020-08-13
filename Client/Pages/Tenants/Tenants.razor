@@ -1,26 +1,26 @@
-﻿@page "/industries"
+﻿@page "/tenants/{IndustryId:int}"
 @using Occumetric.Shared
 @inject HttpClient _httpClient
-@inject ICommonHttpService _commonHttpService
-<h3>Industries</h3>
+<h3>Tenants</h3>
 
 <p><b>@_errorMessage</b></p>
-<a href="/industries/create" class="btn btn-primary">Create Industry</a>
+<a href="/tenants/create" class="btn btn-primary">Create Tenant</a>
 <h3>Result</h3>
-@if (_industryViewModels?.Count > 0)
+<button @onclick="FetchData">Fetch Data</button>
+@if (_tenantViewModels?.Count > 0)
 {
     <table class="table table-striped">
         <thead>
             <tr>
                 <th>Id</th>
                 <th>Name</th>
-                <th>Tenants</th>
+                <th>Master Tasks</th>
                 <th>Edit</th>
             </tr>
         </thead>
         <tbody>
 
-            @foreach (var item in _industryViewModels)
+            @foreach (var item in _tenantViewModels)
             {
                 <tr>
                     <td>
@@ -30,10 +30,10 @@
                         @item.Name
                     </td>
                     <td>
-                        <a href="@($"/tenants/{item.Id}")">Tenants</a>
+                        <a href="/master-tasks">Master Tasks</a>
                     </td>
                     <td>
-                        <a href="@($"/industries/update/{item.Id}")" class="btn btn-primary">Edit</a>
+                        <a href="@($"/tenants/update/{item.Id}")" class="btn btn-primary">Edit</a>
                     </td>
                 </tr>
             }
@@ -45,13 +45,14 @@ else
     <p>There are no records to show.</p>
 }
 @code {
-    private List<IndustryViewModel> _industryViewModels { get; set; }
+    [Parameter] public int IndustryId { get; set; }
+    private List<TenantViewModel> _tenantViewModels { get; set; }
     private string _errorMessage = "";
 
     protected async override void OnInitialized()
     {
         base.OnInitialized();
-        _industryViewModels = new List<IndustryViewModel>();
+        _tenantViewModels = new List<TenantViewModel>();
         await FetchData();
 
     }
@@ -59,8 +60,8 @@ else
     {
         try
         {
-            //_industryViewModels = await _httpClient.GetFromJsonAsync<List<IndustryViewModel>>("api/v1/industry");
-            _industryViewModels = await _commonHttpService.GetAllIndustries();
+            var response = await _httpClient.GetFromJsonAsync<TenantViewModel>($"api/v1/tenant/1");
+            _tenantViewModels = await _httpClient.GetFromJsonAsync<List<TenantViewModel>>($"api/v1/tenant/industry/{IndustryId}");
             StateHasChanged();
         }
         catch (Exception e)
