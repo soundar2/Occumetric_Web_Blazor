@@ -18,12 +18,12 @@ namespace Occumetric.Server.Areas.Industries
             return _mapper.Map<List<IndustryViewModel>>(_context.Industries.ToList());
         }
 
-        public IndustryViewModel Get(string guid)
+        public IndustryViewModel Get(int Id)
         {
-            return _mapper.Map<IndustryViewModel>(_context.Industries.Where(x => x.Guid == guid).Select(x => x).Single());
+            return _mapper.Map<IndustryViewModel>(_context.Industries.Find(Id));
         }
 
-        public string Create(CreateIndustryDto dto)
+        public int Create(CreateIndustryDto dto)
         {
             var model = new Industry
             {
@@ -31,12 +31,12 @@ namespace Occumetric.Server.Areas.Industries
             };
             _context.Industries.Add(model);
             _context.SaveChanges();
-            return model.Guid;
+            return model.Id;
         }
 
         public void Update(UpdateIndustryDto dto)
         {
-            var ind = (from x in _context.Industries where x.Guid == dto.Guid select x).First();
+            var ind = _context.Industries.Find(dto.Id);
             ind.Name = dto.Name;
             _context.SaveChanges();
         }

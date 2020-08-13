@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <Folder Include="Areas\EffortType\" />
+    <Folder Include="Areas\NewFolder\" />
   </ItemGroup>
 
   <ProjectExtensions>

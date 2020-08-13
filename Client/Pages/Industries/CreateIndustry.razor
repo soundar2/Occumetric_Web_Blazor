@@ -12,14 +12,14 @@
             <ValidationMessage For="@(() => CreateIndustryDto.Name)" />
         </div>
     </div>
-    <b>@_CreatedPid</b>
+    <b>@_createdResult</b>
     <br />
     <b>@_errorMessage</b>
     <button class="btn btn-primary" type="submit">Save Changes</button>
 </EditForm>
 @code {
     [Parameter] public CreateIndustryDto CreateIndustryDto { get; set; }
-    private string _CreatedPid = "Test";
+    private string _createdResult = "";
     private string _errorMessage = "error";
     private async void OnValidSubmit()
     {
@@ -31,7 +31,7 @@
             {
                 Console.WriteLine("Success");
                 var content = await response.Content.ReadFromJsonAsync<StringResult>();
-                _CreatedPid = content.Result;
+                _createdResult = content.Result;
                 StateHasChanged();
             }
             else

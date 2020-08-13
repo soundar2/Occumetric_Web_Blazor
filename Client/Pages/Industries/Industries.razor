@@ -4,14 +4,16 @@
 <h3>Industries</h3>
 
 <p><b>@_errorMessage</b></p>
-
+<a href="/industries/create" class="btn btn-primary">Create Industry</a>
 <h3>Result</h3>
 @if (_industryViewModels?.Count > 0)
 {
-    <table>
+    <table class="table table-striped">
         <thead>
             <tr>
+                <th>Id</th>
                 <th>Name</th>
+                <th>Tenants</th>
                 <th>Edit</th>
             </tr>
         </thead>
@@ -21,10 +23,16 @@
             {
                 <tr>
                     <td>
+                        @item.Id
+                    </td>
+                    <td>
                         @item.Name
                     </td>
                     <td>
-                        <a href="@($"/industries/update/{item.Guid}")" class="btn btn-primary">Edit</a>
+                        <a href="/tenants">Tenants</a>
+                    </td>
+                    <td>
+                        <a href="@($"/industries/update/{item.Id}")" class="btn btn-primary">Edit</a>
                     </td>
                 </tr>
             }
@@ -37,7 +45,7 @@ else
 }
 @code {
     private List<IndustryViewModel> _industryViewModels { get; set; }
-    private string _errorMessage = "test";
+    private string _errorMessage = "";
 
     protected async override void OnInitialized()
     {

@@ -60,7 +60,7 @@ namespace Occumetric.Server.Areas.MasterTasks
             }
             _context.MasterTasks.Add(masterTask);
             await _context.SaveChangesAsync(cancellationToken);
-            return masterTask.id;
+            return masterTask.Id;
         }
     }
 }

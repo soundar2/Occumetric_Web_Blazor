@@ -1,4 +1,5 @@
-﻿using Occumetric.Server.Areas.Jobs;
+﻿using Occumetric.Server.Areas.Industries;
+using Occumetric.Server.Areas.Jobs;
 using Occumetric.Server.Models;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -8,11 +9,18 @@ namespace Occumetric.Server.Areas.Tenants
     [Table("tenants")]
     public class Tenant : BaseEntity
     {
-        public string guid { get; set; }
-        public string name { get; set; }
-        public string address { get; set; }
-        public string state { get; set; }
-        public string agency { get; set; }
+        public Tenant()
+        {
+            Guid = System.Guid.NewGuid().ToString();
+        }
+
+        public string Guid { get; set; }
+        public string Name { get; set; }
+
+        public int IndustryId { get; set; }
+
+        [ForeignKey("IndustryId")]
+        public virtual Industry Industry { get; set; }
 
         public virtual List<Job> Jobs { get; set; }
     }

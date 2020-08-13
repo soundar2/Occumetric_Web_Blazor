@@ -2,13 +2,13 @@
 
 namespace Occumetric.Shared
 {
-    public class UpdateIndustryDto
+    public class CreateTenantDto
     {
-        [Required]
-        public int Id { get; set; }
-
         [Required]
         [StringLength(40, MinimumLength = 4)]
         public string Name { get; set; }
+
+        [Required]
+        public int IndustryId { get; set; }
     }
 }

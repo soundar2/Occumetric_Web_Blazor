@@ -1,71 +1,70 @@
-﻿using System.Linq;
-using System;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Occumetric.Server.Areas.Shared;
+using Occumetric.Server.Areas.Tenants;
+using Occumetric.Shared;
+using System;
 using System.Threading.Tasks;
 
-namespace Occumetric.Server.Areas.Tenants
+namespace Occumetric.Server.Areas.Industries
 {
-    [Route("api/v1/tenant")]
+    [Microsoft.AspNetCore.Mvc.Route("api/v1/tenant")]
     public class TenantController : ApiController
     {
-        [HttpGet]
-        [AllowAnonymous]
-        public async Task<IActionResult> Get()
+        private readonly ITenantService _tenantService;
+
+        public TenantController(ITenantService tenantService)
         {
-            var result = await Mediator.Send(new GetTenantsDto());
-            return Ok(result);
+            _tenantService = tenantService;
         }
 
-        [HttpGet("show/{guid}")]
-        [AllowAnonymous]
-        public async Task<IActionResult> Show([FromRoute] string guid)
+        [HttpGet("{industryGuid}")]
+        public async Task<IActionResult> Index(int industryId)
         {
-            var result = await Mediator.Send(new ShowTenantDto
+            try
             {
-                guid = guid
-            });
-            return Ok(result);
+                var result = await Task.Run(() => _tenantService.Index(industryId));
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("{Id}")]
+        public async Task<IActionResult> Get(int Id)
+        {
+            try
+            {
+                var result = await Task.Run(() => _tenantService.Get(Id));
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Create([FromBody] CreateTenantDto dto)
+        public async Task<ActionResult<StringResult>> Post(CreateTenantDto dto)
         {
-            var result = await Mediator.Send(dto);
-            return Ok(result);
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="guid"></param>
-        /// <returns></returns>
-        [HttpPut]
-        [AllowAnonymous]
-        public async Task<IActionResult> Update([FromBody] UpdateTenantDto dto)
-        {
-            return Ok(await Mediator.Send(dto));
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="guid"></param>
-        /// <returns></returns>
-        [HttpDelete("{guid}")]
-        [AllowAnonymous]
-        public async Task<IActionResult> Delete([FromRoute] string guid)
-        {
-            await Mediator.Send(new DeleteTenantDto
+            var createdId = await Task.Run(() =>
             {
-                guid = guid
+                return _tenantService.Create(dto);
             });
-            return NoContent();
+            return Ok(new StringResult
+            {
+                Result = createdId.ToString()
+            });
         }
 
-        //
-    }
+        [HttpPut]
+        public async Task<IActionResult> Update(UpdateTenantDto dto)
+        {
+            await Task.Run(() => _tenantService.Update(dto));
+            return Ok();
+        }
+    } // end class
 }

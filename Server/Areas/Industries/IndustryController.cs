@@ -31,12 +31,12 @@ namespace Occumetric.Server.Areas.Industries
             }
         }
 
-        [HttpGet("{guid}")]
-        public async Task<IActionResult> Get(string guid)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int id)
         {
             try
             {
-                var result = await Task.Run(() => _industryService.Get(guid));
+                var result = await Task.Run(() => _industryService.Get(id));
                 return Ok(result);
             }
             catch (Exception e)
@@ -49,14 +49,14 @@ namespace Occumetric.Server.Areas.Industries
         [AllowAnonymous]
         public async Task<ActionResult<StringResult>> Post(CreateIndustryDto dto)
         {
-            var result = await Task.Run(() =>
+            var id = await Task.Run(() =>
             {
                 return _industryService.Create(dto);
             });
             return Ok(new StringResult
             {
-                Result = result
-            });
+                Result = id.ToString()
+            }); ;
         }
 
         [HttpPut]

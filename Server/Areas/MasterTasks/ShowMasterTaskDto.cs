@@ -30,7 +30,7 @@ namespace Occumetric.Server.Areas.MasterTasks
         public async Task<MasterTask> Handle(ShowMasterTaskDto request, CancellationToken cancellationToken)
         {
             var ret = (await _context.MasterTasks
-                .Where(t => t.id == request.id)
+                .Where(t => t.Id == request.id)
                 .ToListAsync())
                 .SingleOrDefault();
             return ret;

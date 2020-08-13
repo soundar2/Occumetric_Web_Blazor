@@ -7,9 +7,9 @@ namespace Occumetric.Server.Areas.Industries
     {
         List<IndustryViewModel> Index();
 
-        IndustryViewModel Get(string guid);
+        IndustryViewModel Get(int Id);
 
-        string Create(CreateIndustryDto dto);
+        int Create(CreateIndustryDto dto);
 
         void Update(UpdateIndustryDto dto);
     }
