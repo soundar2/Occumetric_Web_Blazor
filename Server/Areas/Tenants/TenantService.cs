@@ -13,10 +13,10 @@ namespace Occumetric.Server.Areas.Tenants
         {
         }
 
-        public List<TenantViewModel> Index(int industryId)
+        public List<TenantViewModel> Index(int IndustryId)
         {
             return _mapper.Map<List<TenantViewModel>>((from t in _context.Tenants
-                                                       where t.IndustryId == industryId
+                                                       where t.IndustryId == IndustryId
                                                        orderby t.Name
                                                        select t).ToList());
         }
@@ -32,8 +32,8 @@ namespace Occumetric.Server.Areas.Tenants
             {
                 Name = dto.Name,
             };
-            _context.Industries.Find(dto.IndustryId)
-                .Tenants.Add(tenant);
+            var parent = _context.Industries.Find(dto.IndustryId);
+            parent.Tenants.Add(tenant);
             _context.SaveChanges();
             return tenant.Id;
         }

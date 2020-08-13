@@ -15,7 +15,12 @@ namespace Occumetric.Server.Areas.Industries
 
         public string Guid { get; set; }
         public string Name { get; set; }
+        private List<Tenant> _tenants { get; set; }
 
-        public virtual List<Tenant> Tenants { get; set; }
+        public virtual List<Tenant> Tenants
+        {
+            get => _tenants ?? (_tenants = new List<Tenant>());
+            protected set => _tenants = value;
+        }
     }
 }

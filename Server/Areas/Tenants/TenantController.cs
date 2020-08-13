@@ -49,7 +49,7 @@ namespace Occumetric.Server.Areas.Industries
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult<StringResult>> Post(CreateTenantDto dto)
+        public async Task<ActionResult<StringResult>> Create([FromBody] CreateTenantDto dto)
         {
             var createdId = await Task.Run(() =>
             {

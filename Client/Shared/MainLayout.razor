@@ -11,6 +11,11 @@
     </div>
 
     <div class="content px-4">
-        @Body
+        <CascadingValue Value="Globals">
+            @Body
+        </CascadingValue>
     </div>
 </div>
+@code {
+    private Globals Globals = new Globals();
+}

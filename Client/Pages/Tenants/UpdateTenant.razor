@@ -1,0 +1,57 @@
+﻿@page "/tenants/update/{Id:int}"
+@using Occumetric.Shared
+@inject HttpClient _httpClient
+@inject NavigationManager _navigationManager
+<h3>Update Tenant</h3>
+
+<p>TenantId: @Id</p>
+<EditForm Model="_updateTenantDto" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label for="_updateTenantDto.Name">Name:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="_updateTenantDto.Name"></InputText>
+            <ValidationMessage For="@(() => _updateTenantDto.Name)" />
+        </div>
+        <b>
+            @_updateTenantDto.Name
+        </b>
+    </div>
+    <button class="btn btn-primary" type="submit">Save Changes</button>
+    <br />
+    <br />
+    <b>@_errorMessage</b>
+    <br />
+</EditForm>
+@code {
+    [Parameter] public int Id { get; set; }
+    private UpdateTenantDto _updateTenantDto { get; set; } = new UpdateTenantDto();
+    private string _errorMessage = "error";
+    [CascadingParameter] Globals Globals { get; set; }
+    private async void OnValidSubmit()
+    {
+        var response = await _httpClient.PutAsJsonAsync<UpdateTenantDto>("api/v1/tenant", _updateTenantDto);
+        if (response.IsSuccessStatusCode)
+        {
+            _navigationManager.NavigateTo($"/tenants/{Globals.IndustryId}");
+        }
+        else
+        {
+            var content = response.Content.ReadFromJsonAsync<ErrorResult>().Result;
+            _errorMessage = content.Result;
+            StateHasChanged();
+        }
+    }
+    protected async override void OnInitialized()
+    {
+        base.OnInitialized();
+        var vm = await _httpClient.GetFromJsonAsync<TenantViewModel>($"api/v1/tenant/{Id}");
+        _updateTenantDto = new UpdateTenantDto
+        {
+            Id = vm.Id,
+            Name = vm.Name
+        };
+        StateHasChanged();
+
+    }
+}

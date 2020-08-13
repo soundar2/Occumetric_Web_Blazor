@@ -1,31 +1,49 @@
 ﻿@page "/tenants/create"
 @using Occumetric.Shared
 @inject HttpClient _httpClient
+@inject ICommonHttpService _commonHttpService
 <h3>Create Tenant</h3>
 
-<EditForm Model="CreateTenantDto" OnValidSubmit="OnValidSubmit">
+<EditForm Model="_createTenantDto" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator />
     <div class="form-group">
-        <label for="CreateTenantDto.Name">Name:</label>
+        <label>Select Industry:</label>
         <div>
-            <InputText class="form-control" @bind-Value="CreateTenantDto.Name"></InputText>
-            <ValidationMessage For="@(() => CreateTenantDto.Name)" />
+            <select @bind="_createTenantDto.IndustryId">
+                <option value="0">-- Please Select --</option>
+                @foreach (var item in _industries)
+                {
+                    <option value="@item.Id">@item.Name</option>
+                }
+            </select>
         </div>
     </div>
+    <div class="form-group">
+        <label for="_createTenantDto.Name">Name:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="_createTenantDto.Name"></InputText>
+            <ValidationMessage For="@(() => _createTenantDto.Name)" />
+        </div>
+    </div>
+    <p>
+        Selected Id: @_createTenantDto.IndustryId
+    </p>
     <b>@_createdResult</b>
     <br />
     <b>@_errorMessage</b>
     <button class="btn btn-primary" type="submit">Save Changes</button>
 </EditForm>
 @code {
-    [Parameter] public CreateTenantDto CreateTenantDto { get; set; }
+    private CreateTenantDto _createTenantDto = new CreateTenantDto();
+    private List<IndustryViewModel> _industries = new List<IndustryViewModel>();
+    private string _selectedIndustryId = "0";
     private string _createdResult = "";
     private string _errorMessage = "error";
     private async void OnValidSubmit()
     {
         try
         {
-            var response = await _httpClient.PostAsJsonAsync("api/v1/tenant", CreateTenantDto);
+            var response = await _httpClient.PostAsJsonAsync("api/v1/tenant", _createTenantDto);
             Console.WriteLine("Success");
             if (response.IsSuccessStatusCode)
             {
@@ -50,9 +68,11 @@
         }
         StateHasChanged();
     }
-    protected override void OnInitialized()
+    protected async override void OnInitialized()
     {
         base.OnInitialized();
-        CreateTenantDto = new CreateTenantDto();
+        _industries = await _commonHttpService.GetAllIndustries();
+        StateHasChanged();
+
     }
 }

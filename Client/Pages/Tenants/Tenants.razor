@@ -48,6 +48,7 @@ else
     [Parameter] public int IndustryId { get; set; }
     private List<TenantViewModel> _tenantViewModels { get; set; }
     private string _errorMessage = "";
+    [CascadingParameter] Globals Globals { get; set; }
 
     protected async override void OnInitialized()
     {
@@ -60,6 +61,7 @@ else
     {
         try
         {
+            Globals.IndustryId = IndustryId;
             var response = await _httpClient.GetFromJsonAsync<TenantViewModel>($"api/v1/tenant/1");
             _tenantViewModels = await _httpClient.GetFromJsonAsync<List<TenantViewModel>>($"api/v1/tenant/industry/{IndustryId}");
             StateHasChanged();

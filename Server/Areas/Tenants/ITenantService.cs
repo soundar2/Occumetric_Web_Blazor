@@ -11,6 +11,6 @@ namespace Occumetric.Server.Areas.Tenants
 
         TenantViewModel Get(int id);
 
-        List<TenantViewModel> Index(int industryId);
+        List<TenantViewModel> Index(int IndustryId);
     }
 }
