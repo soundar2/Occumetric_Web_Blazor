@@ -3,6 +3,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Occumetric.Server.Areas.Industries;
+using Occumetric.Server.Areas.TaskCategories;
 using Occumetric.Server.Areas.Tenants;
 using System.Reflection;
 
@@ -17,6 +18,7 @@ namespace Occumetric.Server.Areas.Shared
             services.AddMediatR(Assembly.GetExecutingAssembly());
             services.AddTransient<IIndustryService, IndustryService>();
             services.AddTransient<ITenantService, TenantService>();
+            services.AddTransient<ITaskCategoryService, TaskCategoryService>();
 
             //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
             //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));

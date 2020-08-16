@@ -5,17 +5,17 @@ using Occumetric.Shared;
 using System;
 using System.Threading.Tasks;
 
-namespace Occumetric.Server.Areas.Tenants
+namespace Occumetric.Server.Areas.TaskCategories
 {
-    [Microsoft.AspNetCore.Mvc.Route("api/v1/tenant")]
+    [Microsoft.AspNetCore.Mvc.Route("api/v1/taskCategory")]
     [AllowAnonymous]
-    public class TenantController : ApiController
+    public class TaskCategoryController : ApiController
     {
-        private readonly ITenantService _tenantService;
+        private readonly ITaskCategoryService _taskCategoryService;
 
-        public TenantController(ITenantService tenantService)
+        public TaskCategoryController(ITaskCategoryService taskCategoryService)
         {
-            _tenantService = tenantService;
+            _taskCategoryService = taskCategoryService;
         }
 
         [HttpGet("industry/{IndustryId}")]
@@ -23,7 +23,7 @@ namespace Occumetric.Server.Areas.Tenants
         {
             try
             {
-                var result = await Task.Run(() => _tenantService.Index(IndustryId));
+                var result = await Task.Run(() => _taskCategoryService.Index(IndustryId));
                 return Ok(result);
             }
             catch (Exception e)
@@ -37,7 +37,7 @@ namespace Occumetric.Server.Areas.Tenants
         {
             try
             {
-                var result = await Task.Run(() => _tenantService.Get(Id));
+                var result = await Task.Run(() => _taskCategoryService.Get(Id));
                 return Ok(result);
             }
             catch (Exception e)
@@ -48,11 +48,11 @@ namespace Occumetric.Server.Areas.Tenants
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult<StringResult>> Create([FromBody] CreateTenantDto dto)
+        public async Task<ActionResult<StringResult>> Create([FromBody] CreateTaskCategoryDto dto)
         {
             var createdId = await Task.Run(() =>
             {
-                return _tenantService.Create(dto);
+                return _taskCategoryService.Create(dto);
             });
             return Ok(new StringResult
             {
@@ -61,9 +61,9 @@ namespace Occumetric.Server.Areas.Tenants
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(UpdateTenantDto dto)
+        public async Task<IActionResult> Update(UpdateTaskCategoryDto dto)
         {
-            await Task.Run(() => _tenantService.Update(dto));
+            await Task.Run(() => _taskCategoryService.Update(dto));
             return Ok();
         }
     } // end class

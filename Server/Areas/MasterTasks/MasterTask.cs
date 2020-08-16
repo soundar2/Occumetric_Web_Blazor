@@ -1,5 +1,6 @@
 ﻿using Occumetric.Server.Areas.Niosh;
 using Occumetric.Server.Areas.Snooks;
+using Occumetric.Server.Areas.TaskCategories;
 using Occumetric.Server.Models;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -26,13 +27,6 @@ namespace Occumetric.Server.Areas.MasterTasks
         public string lift_duration_type { get; set; }
         public string lift_frequency_type { get; set; }
 
-        public virtual List<TaskCategoryMasterTaskMapping> TaskCategoryMasterTaskMappings { get; set; }
-    }
-
-    [Table("task_categories")]
-    public class TaskCategory : BaseEntity
-    {
-        public string category_name { get; set; }
         public virtual List<TaskCategoryMasterTaskMapping> TaskCategoryMasterTaskMappings { get; set; }
     }
 

@@ -7,6 +7,7 @@ using Occumetric.Server.Areas.Jobs;
 using Occumetric.Server.Areas.MasterTasks;
 using Occumetric.Server.Areas.Models;
 using Occumetric.Server.Areas.Shared;
+using Occumetric.Server.Areas.TaskCategories;
 using Occumetric.Server.Areas.Tasks;
 using Occumetric.Server.Areas.Tenants;
 using Occumetric.Server.Areas.User;

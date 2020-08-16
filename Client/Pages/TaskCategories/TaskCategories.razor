@@ -1,26 +1,27 @@
-﻿@page "/industries"
+﻿@page "/taskCategories/{IndustryId:int}"
 @using Occumetric.Shared
 @inject HttpClient _httpClient
 @inject ICommonHttpService _commonHttpService
-<h3>Industries</h3>
+<h3>TaskCategorys</h3>
 
 <p><b>@_errorMessage</b></p>
-<a href="/industries/create" class="btn btn-primary">Create Industry</a>
+<a href="/taskCategories/create" class="btn btn-primary">Create TaskCategory</a>
 <h3>Result</h3>
-@if (_industryViewModels?.Count > 0)
+<button @onclick="FetchData">Fetch Data</button>
+@if (_taskCategoryViewModels?.Count > 0)
 {
     <table class="table table-striped">
         <thead>
             <tr>
                 <th>Id</th>
                 <th>Name</th>
-                <th>Tenants</th>
+                <th>Master Tasks</th>
                 <th>Edit</th>
             </tr>
         </thead>
         <tbody>
 
-            @foreach (var item in _industryViewModels)
+            @foreach (var item in _taskCategoryViewModels)
             {
                 <tr>
                     <td>
@@ -30,13 +31,10 @@
                         @item.Name
                     </td>
                     <td>
-                        <a href="@($"/tenants/{item.Id}")">Tenants</a>
+                        <a href="/master-tasks">Master Tasks</a>
                     </td>
                     <td>
-                        <a href="@($"/taskCategories/{item.Id}")">Task Categories</a>
-                    </td>
-                    <td>
-                        <a href="@($"/industries/update/{item.Id}")" class="btn btn-primary">Edit</a>
+                        <a href="@($"/taskCategories/update/{item.Id}")" class="btn btn-primary">Edit</a>
                     </td>
                 </tr>
             }
@@ -48,13 +46,15 @@ else
     <p>There are no records to show.</p>
 }
 @code {
-    private List<IndustryViewModel> _industryViewModels { get; set; }
+    [Parameter] public int IndustryId { get; set; }
+    private List<TaskCategoryViewModel> _taskCategoryViewModels { get; set; }
     private string _errorMessage = "";
+    [CascadingParameter] Globals Globals { get; set; }
 
     protected async override void OnInitialized()
     {
         base.OnInitialized();
-        _industryViewModels = new List<IndustryViewModel>();
+        _taskCategoryViewModels = new List<TaskCategoryViewModel>();
         await FetchData();
 
     }
@@ -62,8 +62,8 @@ else
     {
         try
         {
-            //_industryViewModels = await _httpClient.GetFromJsonAsync<List<IndustryViewModel>>("api/v1/industry");
-            _industryViewModels = await _commonHttpService.GetAllIndustries();
+            Globals.IndustryId = IndustryId;
+            _taskCategoryViewModels = await _commonHttpService.GetTaskCategories(IndustryId);
             StateHasChanged();
         }
         catch (Exception e)

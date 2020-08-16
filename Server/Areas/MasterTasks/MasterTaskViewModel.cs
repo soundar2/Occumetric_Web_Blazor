@@ -1,5 +1,6 @@
 ﻿using Occumetric.Server.Areas.Niosh;
 using Occumetric.Server.Areas.Shared.Mappings;
+using Occumetric.Server.Areas.TaskCategories;
 using System.Collections.Generic;
 
 namespace Occumetric.Server.Areas.MasterTasks
