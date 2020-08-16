@@ -43,7 +43,9 @@ namespace Occumetric.Server
             //
             //services.AddMediatR(typeof(Occumetric.Server.Areas.Tenants.GetTenantsDtoHandler).GetTypeInfo().Assembly);
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseMySQL(
+                options
+                .UseLazyLoadingProxies()
+                .UseMySQL(
                     Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false

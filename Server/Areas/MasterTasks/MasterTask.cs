@@ -36,11 +36,11 @@ namespace Occumetric.Server.Areas.MasterTasks
         public int master_task_id { get; set; }
 
         [ForeignKey("master_task_id")]
-        public MasterTask MasterTask { get; set; }
+        public virtual MasterTask MasterTask { get; set; }
 
         public int task_category_id { get; set; }
 
         [ForeignKey("task_category_id")]
-        public TaskCategory TaskCategory { get; set; }
+        public virtual TaskCategory TaskCategory { get; set; }
     }
 }

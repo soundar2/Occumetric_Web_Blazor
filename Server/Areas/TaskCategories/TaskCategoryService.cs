@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using Occumetric.Server.Areas.Shared;
 using Occumetric.Server.Data;
 using Occumetric.Shared;
@@ -29,28 +28,25 @@ namespace Occumetric.Server.Areas.TaskCategories
 
         public TaskCategoryViewModel Get(int id)
         {
-            return _mapper.Map<TaskCategoryViewModel>(_context.TaskCategories.Find(id));
+            var tc = _context.TaskCategories
+                .Find(id);
+            var name = tc.Industry.Name + "";
+            var vm = _mapper.Map<TaskCategoryViewModel>(tc);
+            vm.IndustryViewModel = _mapper.Map<IndustryViewModel>(tc.Industry);
+            return vm;
         }
 
         public async Task<bool> Create(CreateTaskCategoryDto dto)
         {
-            var tc = new TaskCategory
+            foreach (var id in dto.IndustryIds)
             {
-                Name = dto.Name
-            };
-
-            if (dto.IndustryId == 0)
-            {
-                //
-                //this task category applies to all indutries
-                //
-                await _context.Industries.ForEachAsync(x => x.TaskCategories.Add(tc));
+                var ind = await _context.Industries.FindAsync(id);
+                ind.TaskCategories.Add(new TaskCategory
+                {
+                    Name = dto.Name
+                });
             }
-            else
-            {
-                var ind = await _context.Industries.FindAsync(dto.IndustryId);
-                ind.TaskCategories.Add(tc);
-            }
+            _context.SaveChanges();
             return true;
         }
 
