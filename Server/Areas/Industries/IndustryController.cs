@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Occumetric.Server.Areas.Industries
 {
-    [Microsoft.AspNetCore.Mvc.Route("api/v1/industry")]
+    [Microsoft.AspNetCore.Mvc.Route("api/v1/industries")]
     [ApiController]
     public class IndustryController : ApiController
     {

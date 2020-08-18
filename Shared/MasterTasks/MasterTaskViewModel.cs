@@ -1,14 +1,10 @@
-﻿using Occumetric.Server.Areas.Industries;
-using Occumetric.Server.Models;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.Collections.Generic;
 
-namespace Occumetric.Server.Areas.MasterTasks
+namespace Occumetric.Shared
 {
-    [Table("master_tasks")]
-    public class MasterTask : BaseEntity
+    public class MasterTaskViewModel
     {
-        [Column("TaskName")]
+        public int Id { get; set; }
         public string Name { get; set; }
 
         public string EffortType { get; set; }
@@ -36,22 +32,14 @@ namespace Occumetric.Server.Areas.MasterTasks
         public string LiftDurationType { get; set; }
 
         public string LiftFrequencyType { get; set; }
-
-        #region Navigation
-
         public int IndustryId { get; set; }
 
-        [ForeignKey("IndustryId")]
-        public virtual Industry Industry { get; set; }
+        private List<TaskCategoryViewModel> _taskCategoryViewModels;
 
-        private List<TaskCategoryMap> _taskCategoryMaps;
-
-        public virtual List<TaskCategoryMap> TaskCategoryMaps
+        public virtual List<TaskCategoryViewModel> TaskCategoryViewModels
         {
-            get => _taskCategoryMaps ?? (_taskCategoryMaps = new List<TaskCategoryMap>());
-            protected set => _taskCategoryMaps = value;
+            get => _taskCategoryViewModels ?? (_taskCategoryViewModels = new List<TaskCategoryViewModel>());
+            protected set => _taskCategoryViewModels = value;
         }
-
-        #endregion Navigation
     }
 }

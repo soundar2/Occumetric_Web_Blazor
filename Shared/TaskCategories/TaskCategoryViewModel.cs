@@ -1,10 +1,17 @@
-﻿namespace Occumetric.Shared
+﻿using System;
+
+namespace Occumetric.Shared
 {
-    public class TaskCategoryViewModel
+    public class TaskCategoryViewModel : ICloneable
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int IndustryId { get; set; }
-        public IndustryViewModel IndustryViewModel { get; set; }
+
+        public bool IsChecked { get; set; }
+
+        public virtual object Clone()
+        {
+            return this.MemberwiseClone();
+        }
     }
 }

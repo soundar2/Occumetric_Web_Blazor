@@ -17,13 +17,25 @@ namespace Occumetric.Client.Helpers
 
         public async Task<List<IndustryViewModel>> GetAllIndustries()
         {
-            var result = await _httpClient.GetFromJsonAsync<List<IndustryViewModel>>("api/v1/industry");
+            var result = await _httpClient.GetFromJsonAsync<List<IndustryViewModel>>("api/v1/industries");
             return result;
         }
 
-        public async Task<List<TaskCategoryViewModel>> GetTaskCategories(int IndustryId)
+        public async Task<List<TaskCategoryViewModel>> GetTaskCategories()
         {
-            var result = await _httpClient.GetFromJsonAsync<List<TaskCategoryViewModel>>($"api/v1/taskCategory/industry/{IndustryId}");
+            var result = await _httpClient.GetFromJsonAsync<List<TaskCategoryViewModel>>($"api/v1/taskCategories");
+            return result;
+        }
+
+        public async Task<List<MasterTaskViewModel>> GetMasterTasksForIndustry(int industryId)
+        {
+            var result = await _httpClient.GetFromJsonAsync<List<MasterTaskViewModel>>($"api/v1/masterTasks/industry/{industryId}");
+            return result;
+        }
+
+        public async Task<List<MasterTaskViewModel>> GetMasterTasksForCategory(int industryId, int CategoryId)
+        {
+            var result = await _httpClient.GetFromJsonAsync<List<MasterTaskViewModel>>($"api/v1/masterTasks/industry/{industryId}/category/{CategoryId}");
             return result;
         }
     }

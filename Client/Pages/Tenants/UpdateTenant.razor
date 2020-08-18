@@ -30,7 +30,7 @@
     [CascadingParameter] Globals Globals { get; set; }
     private async void OnValidSubmit()
     {
-        var response = await _httpClient.PutAsJsonAsync<UpdateTenantDto>("api/v1/tenant", _updateTenantDto);
+        var response = await _httpClient.PutAsJsonAsync<UpdateTenantDto>("api/v1/tenants", _updateTenantDto);
         if (response.IsSuccessStatusCode)
         {
             _navigationManager.NavigateTo($"/tenants/{Globals.IndustryId}");
@@ -45,7 +45,7 @@
     protected async override void OnInitialized()
     {
         base.OnInitialized();
-        var vm = await _httpClient.GetFromJsonAsync<TenantViewModel>($"api/v1/tenant/{Id}");
+        var vm = await _httpClient.GetFromJsonAsync<TenantViewModel>($"api/v1/tenants/{Id}");
         _updateTenantDto = new UpdateTenantDto
         {
             Id = vm.Id,

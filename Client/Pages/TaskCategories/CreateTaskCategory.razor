@@ -13,34 +13,6 @@
             <ValidationMessage For="@(() => _createTaskCategoryDto.Name)" />
         </div>
     </div>
-    <p>Select one or more industries for which this task category belongs to.</p>
-    <div class="form-group">
-        <label>Select Industries:</label>
-        <div>
-            @foreach (var item in _industries)
-            {
-                int k = _industries.IndexOf(item);
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" @bind="@_isSelected[k]" value="@item.Id" id="@item.Id" name="@item.Id">
-                    <label class="form-check-label" for="@item.Id">
-                        @item.Name
-                    </label>
-                </div>
-            }
-        </div>
-    </div>
-    <ul>
-        @foreach (var item in _industries)
-        {
-            int k = _industries.IndexOf(item);
-            if (_isSelected[k])
-            {
-                <li>
-                    @item.Name
-                </li>
-            }
-        }
-    </ul>
     <b>@_createdResult</b>
     <br />
     <b>@_errorMessage</b>
@@ -48,27 +20,13 @@
 </EditForm>
 @code {
     private CreateTaskCategoryDto _createTaskCategoryDto = new CreateTaskCategoryDto();
-    private List<IndustryViewModel> _industries = new List<IndustryViewModel>();
-    private List<bool> _isSelected = new List<bool>();
     private string _createdResult = "";
     private string _errorMessage = "";
     private async void OnValidSubmit()
     {
         try
         {
-            //
-            //map selected industries
-            //
-            _createTaskCategoryDto.IndustryIds.Clear();
-            foreach (var item in _industries)
-            {
-                int k = _industries.IndexOf(item);
-                if (_isSelected[k] == true)
-                {
-                    _createTaskCategoryDto.IndustryIds.Add(item.Id);
-                }
-            }
-            var response = await _httpClient.PostAsJsonAsync("api/v1/taskCategory", _createTaskCategoryDto);
+            var response = await _httpClient.PostAsJsonAsync("api/v1/taskCategories", _createTaskCategoryDto);
             Console.WriteLine("Success");
             if (response.IsSuccessStatusCode)
             {
@@ -96,9 +54,5 @@
     protected async override void OnInitialized()
     {
         base.OnInitialized();
-        _industries = await _commonHttpService.GetAllIndustries();
-        _isSelected.Clear();
-        _industries.ForEach(x => _isSelected.Add(false));
-        StateHasChanged();
     }
 }

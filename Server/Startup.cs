@@ -7,10 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Occumetric.Server.Areas.Common;
-using Occumetric.Server.Areas.Niosh;
 using Occumetric.Server.Areas.Shared;
-using Occumetric.Server.Areas.Snooks;
-using Occumetric.Server.Areas.Tasks;
 using Occumetric.Server.Areas.User;
 using Occumetric.Server.Data;
 using Occumetric.Server.Models;
@@ -36,9 +33,6 @@ namespace Occumetric.Server
             services.AddApplication();
 
             services.AddScoped<ICurrentUserService, CurrentUserService>();
-            services.AddTransient<INioshService, NioshService>();
-            services.AddTransient<ISnooksService, SnooksService>();
-            services.AddTransient<ITaskService, TaskService>();
 
             //
             //services.AddMediatR(typeof(Occumetric.Server.Areas.Tenants.GetTenantsDtoHandler).GetTypeInfo().Assembly);

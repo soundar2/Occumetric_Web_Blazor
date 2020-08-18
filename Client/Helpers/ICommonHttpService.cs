@@ -8,6 +8,10 @@ namespace Occumetric.Client.Helpers
     {
         public Task<List<IndustryViewModel>> GetAllIndustries();
 
-        Task<List<TaskCategoryViewModel>> GetTaskCategories(int IndustryId);
+        Task<List<TaskCategoryViewModel>> GetTaskCategories();
+
+        Task<List<MasterTaskViewModel>> GetMasterTasksForIndustry(int industryId);
+
+        Task<List<MasterTaskViewModel>> GetMasterTasksForCategory(int industryId, int CategoryId);
     }
 }

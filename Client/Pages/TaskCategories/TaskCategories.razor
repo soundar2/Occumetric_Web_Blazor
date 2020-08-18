@@ -1,8 +1,8 @@
-﻿@page "/taskCategories/industry/{IndustryId:int}"
+﻿@page "/taskCategories"
 @using Occumetric.Shared
 @inject HttpClient _httpClient
 @inject ICommonHttpService _commonHttpService
-<h3>TaskCategorys</h3>
+<h3>Task Categories</h3>
 
 <p><b>@_errorMessage</b></p>
 <a href="/taskCategories/create" class="btn btn-primary">Create TaskCategory</a>
@@ -31,7 +31,7 @@
                         @item.Name
                     </td>
                     <td>
-                        <a href="/master-tasks">Master Tasks</a>
+                        <a href="@($"/masterTasks/industry/{Globals.IndustryId}")">Master Tasks</a>
                     </td>
                     <td>
                         <a href="@($"/taskCategories/update/{item.Id}")" class="btn btn-primary">Edit</a>
@@ -46,7 +46,6 @@ else
     <p>There are no records to show.</p>
 }
 @code {
-    [Parameter] public int IndustryId { get; set; }
     private List<TaskCategoryViewModel> _taskCategoryViewModels { get; set; }
     private string _errorMessage = "";
     [CascadingParameter] Globals Globals { get; set; }
@@ -62,8 +61,7 @@ else
     {
         try
         {
-            Globals.IndustryId = IndustryId;
-            _taskCategoryViewModels = await _commonHttpService.GetTaskCategories(IndustryId);
+            _taskCategoryViewModels = await _commonHttpService.GetTaskCategories();
             StateHasChanged();
         }
         catch (Exception e)

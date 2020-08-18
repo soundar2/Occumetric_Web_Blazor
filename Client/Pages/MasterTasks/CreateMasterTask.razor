@@ -1,0 +1,112 @@
+﻿@page "/masterTasks/create"
+@using Occumetric.Shared
+@using Occumetric.Client.Shared
+@inject HttpClient _httpClient
+@inject ICommonHttpService _commonHttpService
+<h3>Create Master Task</h3>
+
+<EditForm Model="_createMasterTaskDto" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label for="_createMasterTaskDto.Name">Name:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="_createMasterTaskDto.Name"></InputText>
+            <ValidationMessage For="@(() => _createMasterTaskDto.Name)" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="_createMasterTaskDto.WeightLb">Weight to Lift:</label>
+        <div>
+            <InputNumber class="form-control" @bind-Value="_createMasterTaskDto.WeightLb"></InputNumber>
+            <ValidationMessage For="@(() => _createMasterTaskDto.WeightLb)" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="_createMasterTaskDto.FromHeight">Begin Lift:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="_createMasterTaskDto.FromHeight"></InputText>
+            <ValidationMessage For="@(() => _createMasterTaskDto.FromHeight)" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="_createMasterTaskDto.ToHeight">End Lift:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="_createMasterTaskDto.ToHeight"></InputText>
+            <ValidationMessage For="@(() => _createMasterTaskDto.ToHeight)" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Assign To Industries:</label>
+    </div>
+    <div class="form-group">
+        <label>Assign To Categories:</label>
+        <SelectCategories SelectedCategories="_selectedCategories" OnSelectedCategoriesChanged="SelectedCategoriesChanged"></SelectCategories>
+    </div>
+
+    <b>Selected Categories</b>
+    <ul>
+        @foreach (var item in _selectedCategories)
+        {
+            <li>
+                @item.Name
+            </li>
+        }
+    </ul>
+
+    <b>@_createdResult</b>
+    <br />
+    <b>@_errorMessage</b>
+    <button class="btn btn-primary" type="submit">Save Changes</button>
+</EditForm>
+@code {
+    private CreateMasterTaskDto _createMasterTaskDto = new CreateMasterTaskDto();
+    private List<IndustryViewModel> _industries = new List<IndustryViewModel>();
+    private List<TaskCategoryViewModel> _selectedCategories = new List<TaskCategoryViewModel>();
+    private string _createdResult = "";
+    private string _errorMessage = "error";
+    private async void OnValidSubmit()
+    {
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/v1/masterTasks", _createMasterTaskDto);
+            Console.WriteLine("Success");
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Success");
+                var content = await response.Content.ReadFromJsonAsync<StringResult>();
+                _createdResult = content.Result;
+                StateHasChanged();
+            }
+            else
+            {
+                Console.WriteLine("failed");
+                var content = await response.Content.ReadFromJsonAsync<ErrorResult>();
+                _errorMessage = content.Result;
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Exception");
+            Console.WriteLine(e.Message);
+            Console.WriteLine(e.InnerException.Message);
+            _errorMessage = e.Message;
+        }
+        StateHasChanged();
+    }
+    protected async override void OnInitialized()
+    {
+        base.OnInitialized();
+        _industries = await _commonHttpService.GetAllIndustries();
+        StateHasChanged();
+
+    }
+
+    private void SelectedCategoriesChanged(List<TaskCategoryViewModel> items)
+    {
+        _selectedCategories = items;
+    }
+}

@@ -2,6 +2,6 @@
 {
     public class Globals
     {
-        public int IndustryId { get; set; }
+        public static int IndustryId { get; set; }
     }
 }

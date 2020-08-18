@@ -1,0 +1,85 @@
+﻿@using Occumetric.Shared
+@inject ICommonHttpService _commonHttpService
+<h3>SelectCategories</h3>
+<table>
+    <tr>
+        <td>
+            <div class="left-list">
+                @foreach (var item in _leftList)
+                {
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" @bind="item.IsChecked" />
+                        </label>
+                        @item.Name
+                    </div>
+                }
+            </div>
+        </td>
+        <td>
+            <button @onclick="MoveRight">Move Right</button>
+            <br />
+            <button @onclick="DeleteRight">Delete</button>
+        </td>
+        <td>
+            @foreach (var item in _rightList)
+            {
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" @bind="item.IsChecked" />
+                    </label>
+                    @item.Name
+                </div>
+            }
+        </td>
+    </tr>
+</table>
+<b>Selected Categories</b>
+<ul>
+    @foreach (var item in SelectedCategories.OrderBy(x => x.Name))
+    {
+        <li>
+            @item.Name
+        </li>
+    }
+</ul>
+@code {
+    [Parameter] public List<TaskCategoryViewModel> SelectedCategories { get; set; } //input
+    private List<TaskCategoryViewModel> _leftList = new List<TaskCategoryViewModel>();
+    private List<TaskCategoryViewModel> _rightList = new List<TaskCategoryViewModel>();
+    [Parameter] public EventCallback<List<TaskCategoryViewModel>> OnSelectedCategoriesChanged { get; set; }
+
+    //
+
+    protected override async void OnInitialized()
+    {
+        base.OnInitialized();
+        _leftList = await _commonHttpService.GetTaskCategories();
+        StateHasChanged();
+
+    }
+    protected async Task MoveRight()
+    {
+        var leftIds = (from item in _leftList where item.IsChecked select item.Id).ToList();
+        var rightIds = (from item in _rightList select item.Id).ToList();
+        var idsToMove = leftIds.Except(rightIds);
+        foreach (var id in idsToMove)
+        {
+            var item = (TaskCategoryViewModel)_leftList.Where(x => x.Id == id).Select(x => x).Single().Clone();
+            item.IsChecked = false;
+            _rightList.Add(item);
+        }
+
+        await SetSelectedCategories();
+    }
+    protected async Task DeleteRight()
+    {
+        _rightList.RemoveAll(x => x.IsChecked);
+        await SetSelectedCategories();
+    }
+    private async Task SetSelectedCategories()
+    {
+        await OnSelectedCategoriesChanged.InvokeAsync(_rightList);
+    }
+
+}

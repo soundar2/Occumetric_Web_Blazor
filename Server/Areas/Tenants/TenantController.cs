@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Occumetric.Server.Areas.Tenants
 {
-    [Microsoft.AspNetCore.Mvc.Route("api/v1/tenant")]
+    [Microsoft.AspNetCore.Mvc.Route("api/v1/tenants")]
     [AllowAnonymous]
     public class TenantController : ApiController
     {

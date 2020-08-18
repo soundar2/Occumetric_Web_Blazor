@@ -1,50 +1,29 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Occumetric.Server.Areas.Shared;
+using Occumetric.Shared;
 using System;
 using System.Threading.Tasks;
 
 namespace Occumetric.Server.Areas.MasterTasks
 {
-    [Route("api/v1/master-task")]
+    [Microsoft.AspNetCore.Mvc.Route("api/v1/masterTasks")]
+    [AllowAnonymous]
     public class MasterTaskController : ApiController
     {
-        [HttpGet]
-        public async Task<IActionResult> Get()
+        private readonly IMasterTaskService _masterTaskService;
+
+        public MasterTaskController(IMasterTaskService masterTaskService)
         {
-            try
-            {
-                return Ok(await Mediator.Send(new GetMasterTasksDto()));
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+            _masterTaskService = masterTaskService;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Search([FromBody] string searchFor)
+        [HttpGet("industry/{IndustryId:int}")]
+        public async Task<IActionResult> GetMasterTasksForIndustry([FromRoute] int IndustryId)
         {
             try
             {
-                return Ok(await Mediator.Send(new GetMasterTasksDto()));
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-
-        [HttpGet("show/{id:int}")]
-        [AllowAnonymous]
-        public async Task<IActionResult> Show([FromRoute] int id)
-        {
-            try
-            {
-                var result = await Mediator.Send(new ShowMasterTaskDto
-                {
-                    id = (int)id
-                });
+                var result = await Task.Run(() => _masterTaskService.GetMasterTaskForIndustry(IndustryId));
                 return Ok(result);
             }
             catch (Exception e)
@@ -53,15 +32,53 @@ namespace Occumetric.Server.Areas.MasterTasks
             }
         }
 
-        //[HttpPut]
-        //[AllowAnonymous]
-        //public async Task<IActionResult> Update([FromBody] MasterTask masterTask)
-        //{
-        //    var result = await Mediator.Send(new ShowMasterTaskDto
-        //    {
-        //        id = id
-        //    });
-        //    return Ok(result);
-        //}
-    }
+        [HttpGet("industry/{IndustryId:int}/category/{CategoryId:int}")]
+        public async Task<IActionResult> GetMasterTasksForCategory([FromRoute] int IndustryId, int CategoryId)
+        {
+            try
+            {
+                var result = await Task.Run(() => _masterTaskService.GetMasterTaskForCategory(IndustryId, CategoryId));
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("{Id:int}")]
+        public async Task<IActionResult> Get([FromRoute] int Id)
+        {
+            try
+            {
+                var result = await Task.Run(() => _masterTaskService.Get(Id));
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult<StringResult>> Create([FromBody] CreateMasterTaskDto dto)
+        {
+            var createdId = await Task.Run(() =>
+            {
+                return _masterTaskService.Create(dto);
+            });
+            return Ok(new StringResult
+            {
+                Result = createdId.ToString()
+            });
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Update(UpdateMasterTaskDto dto)
+        {
+            await Task.Run(() => _masterTaskService.Update(dto));
+            return Ok();
+        }
+    } // end class
 }

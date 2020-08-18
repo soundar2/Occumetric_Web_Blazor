@@ -29,7 +29,7 @@
     private string _errorMessage = "error";
     private async void OnValidSubmit()
     {
-        var response = await _httpClient.PutAsJsonAsync<UpdateIndustryDto>("api/v1/industry", _updateIndustryDto);
+        var response = await _httpClient.PutAsJsonAsync<UpdateIndustryDto>("api/v1/industries", _updateIndustryDto);
         if (response.IsSuccessStatusCode)
         {
             _navigationManager.NavigateTo("/industries");
@@ -38,7 +38,7 @@
     protected async override void OnInitialized()
     {
         base.OnInitialized();
-        var vm = await _httpClient.GetFromJsonAsync<IndustryViewModel>($"api/v1/industry/{Id}");
+        var vm = await _httpClient.GetFromJsonAsync<IndustryViewModel>($"api/v1/industries/{Id}");
         _updateIndustryDto = new UpdateIndustryDto
         {
             Id = vm.Id,

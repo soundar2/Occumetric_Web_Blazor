@@ -12,10 +12,6 @@
             <InputText class="form-control" @bind-Value="_updateTaskCategoryDto.Name"></InputText>
             <ValidationMessage For="@(() => _updateTaskCategoryDto.Name)" />
         </div>
-        Industry:
-        <b>
-            @_ivm.Name
-        </b>
     </div>
     <div>
     </div>
@@ -28,15 +24,13 @@
 @code {
     [Parameter] public int Id { get; set; }
     private UpdateTaskCategoryDto _updateTaskCategoryDto { get; set; } = new UpdateTaskCategoryDto();
-    private IndustryViewModel _ivm = new IndustryViewModel();
     private string _errorMessage = "error";
-    [CascadingParameter] Globals Globals { get; set; }
     private async void OnValidSubmit()
     {
-        var response = await _httpClient.PutAsJsonAsync<UpdateTaskCategoryDto>("api/v1/taskCategory", _updateTaskCategoryDto);
+        var response = await _httpClient.PutAsJsonAsync<UpdateTaskCategoryDto>("api/v1/taskCategories", _updateTaskCategoryDto);
         if (response.IsSuccessStatusCode)
         {
-            _navigationManager.NavigateTo($"/taskCategories/industry/{_updateTaskCategoryDto.IndustryId}");
+            _navigationManager.NavigateTo($"/taskCategories");
         }
         else
         {
@@ -48,14 +42,12 @@
     protected async override void OnInitialized()
     {
         base.OnInitialized();
-        var vm = await _httpClient.GetFromJsonAsync<TaskCategoryViewModel>($"api/v1/taskCategory/{Id}");
+        var vm = await _httpClient.GetFromJsonAsync<TaskCategoryViewModel>($"api/v1/taskCategories/{Id}");
         _updateTaskCategoryDto = new UpdateTaskCategoryDto
         {
             Id = vm.Id,
-            Name = vm.Name,
-            IndustryId = vm.IndustryId,
+            Name = vm.Name
         };
-        _ivm = vm.IndustryViewModel;
         StateHasChanged();
 
     }

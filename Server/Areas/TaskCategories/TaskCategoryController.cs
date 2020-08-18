@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Occumetric.Server.Areas.TaskCategories
 {
-    [Microsoft.AspNetCore.Mvc.Route("api/v1/taskCategory")]
+    [Microsoft.AspNetCore.Mvc.Route("api/v1/taskCategories")]
     [AllowAnonymous]
     public class TaskCategoryController : ApiController
     {
@@ -18,12 +18,12 @@ namespace Occumetric.Server.Areas.TaskCategories
             _taskCategoryService = taskCategoryService;
         }
 
-        [HttpGet("industry/{IndustryId}")]
-        public async Task<IActionResult> Index([FromRoute] int IndustryId)
+        [HttpGet]
+        public async Task<IActionResult> Index()
         {
             try
             {
-                var result = await Task.Run(() => _taskCategoryService.Index(IndustryId));
+                var result = await Task.Run(() => _taskCategoryService.Index());
                 return Ok(result);
             }
             catch (Exception e)
@@ -32,7 +32,7 @@ namespace Occumetric.Server.Areas.TaskCategories
             }
         }
 
-        [HttpGet("{Id}")]
+        [HttpGet("{Id:int}")]
         public async Task<IActionResult> Get([FromRoute] int Id)
         {
             try
@@ -48,16 +48,10 @@ namespace Occumetric.Server.Areas.TaskCategories
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult<StringResult>> Create([FromBody] CreateTaskCategoryDto dto)
+        public IActionResult Create([FromBody] CreateTaskCategoryDto dto)
         {
-            var createdId = await Task.Run(() =>
-            {
-                return _taskCategoryService.Create(dto);
-            });
-            return Ok(new StringResult
-            {
-                Result = createdId.ToString()
-            });
+            _taskCategoryService.Create(dto);
+            return Ok();
         }
 
         [HttpPut]

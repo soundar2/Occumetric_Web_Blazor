@@ -43,7 +43,7 @@
     {
         try
         {
-            var response = await _httpClient.PostAsJsonAsync("api/v1/tenant", _createTenantDto);
+            var response = await _httpClient.PostAsJsonAsync("api/v1/tenants", _createTenantDto);
             Console.WriteLine("Success");
             if (response.IsSuccessStatusCode)
             {

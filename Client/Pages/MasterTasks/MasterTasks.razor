@@ -1,28 +1,35 @@
-﻿@page "/tenants/{IndustryId:int}"
+﻿@page "/masterTasks/industry/{IndustryId:int}"
 @using Occumetric.Shared
 @inject HttpClient _httpClient
-<h3>Tenants</h3>
+@inject ICommonHttpService _commonHttpService
+<h3>Master Tasks</h3>
 
 <p><b>@_errorMessage</b></p>
-<a href="/tenants/create" class="btn btn-primary">Create Tenant</a>
+<a href="/masterTasks/create" class="btn btn-primary">Create Master Task</a>
 <h3>Result</h3>
 <button @onclick="FetchData">Fetch Data</button>
-@if (_tenantViewModels?.Count > 0)
+@if (_masterTaskViewModels?.Count > 0)
 {
     <table class="table table-striped">
         <thead>
             <tr>
+                <td>
+                    No.
+                </td>
                 <th>Id</th>
                 <th>Name</th>
-                <th>Master Tasks</th>
+                <th>Categories</th>
                 <th>Edit</th>
             </tr>
         </thead>
         <tbody>
 
-            @foreach (var item in _tenantViewModels)
+            @foreach (var item in _masterTaskViewModels)
             {
                 <tr>
+                    <td>
+                        @(++_rowNo)
+                    </td>
                     <td>
                         @item.Id
                     </td>
@@ -30,10 +37,14 @@
                         @item.Name
                     </td>
                     <td>
-                        <a href=@($"/masterTasks/industry/{item.Industry.Id}")>Master Tasks</a>
+                        @foreach (var tcv in item.TaskCategoryViewModels)
+                        {
+                            @tcv.Name
+                            <br />
+                        }
                     </td>
                     <td>
-                        <a href="@($"/tenants/update/{item.Id}")" class="btn btn-primary">Edit</a>
+                        <a href="@($"/masterTasks/update/{item.Id}")" class="btn btn-primary">Edit</a>
                     </td>
                 </tr>
             }
@@ -46,14 +57,14 @@ else
 }
 @code {
     [Parameter] public int IndustryId { get; set; }
-    private List<TenantViewModel> _tenantViewModels { get; set; }
+    private int _rowNo = 0;
+    private List<MasterTaskViewModel> _masterTaskViewModels { get; set; }
     private string _errorMessage = "";
-    [CascadingParameter] Globals Globals { get; set; }
 
     protected async override void OnInitialized()
     {
         base.OnInitialized();
-        _tenantViewModels = new List<TenantViewModel>();
+        _masterTaskViewModels = new List<MasterTaskViewModel>();
         await FetchData();
 
     }
@@ -61,9 +72,9 @@ else
     {
         try
         {
-            Globals.IndustryId = IndustryId;
-            var response = await _httpClient.GetFromJsonAsync<TenantViewModel>($"api/v1/tenants/1");
-            _tenantViewModels = await _httpClient.GetFromJsonAsync<List<TenantViewModel>>($"api/v1/tenants/industry/{IndustryId}");
+            var response = await _commonHttpService.GetMasterTasksForIndustry(IndustryId);
+            _masterTaskViewModels = await _httpClient.GetFromJsonAsync<List<MasterTaskViewModel>>($"api/v1/masterTasks/industry/{IndustryId}");
+            _rowNo = 0;
             StateHasChanged();
         }
         catch (Exception e)

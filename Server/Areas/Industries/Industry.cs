@@ -1,4 +1,5 @@
-﻿using Occumetric.Server.Areas.Shared;
+﻿using Occumetric.Server.Areas.MasterTasks;
+using Occumetric.Server.Areas.Shared;
 using Occumetric.Server.Areas.TaskCategories;
 using Occumetric.Server.Areas.Tenants;
 using System.Collections.Generic;
@@ -16,23 +17,24 @@ namespace Occumetric.Server.Areas.Industries
 
         public string Guid { get; set; }
         public string Name { get; set; }
-        private List<Tenant> _tenants;
-        private List<TaskCategory> _taskCategories;
 
         //------------------------------------------------
+        private List<MasterTask> _masterTasks;
+
+        public virtual List<MasterTask> MasterTasks
+        {
+            get => _masterTasks ?? (_masterTasks = new List<MasterTask>());
+            protected set => _masterTasks = value;
+        }
+
+        //------------------------------------------------
+
+        private List<Tenant> _tenants;
 
         public virtual List<Tenant> Tenants
         {
             get => _tenants ?? (_tenants = new List<Tenant>());
             protected set => _tenants = value;
-        }
-
-        //------------------------------------------------
-
-        public virtual List<TaskCategory> TaskCategories
-        {
-            get => _taskCategories ?? (_taskCategories = new List<TaskCategory>());
-            protected set => _taskCategories = value;
         }
 
         //------------------------------------------------
