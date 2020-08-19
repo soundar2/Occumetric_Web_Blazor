@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Occumetric.Server.Areas.EffortTypes;
 using Occumetric.Server.Areas.Industries;
 using Occumetric.Server.Areas.MasterTasks;
-using Occumetric.Server.Areas.Models;
 using Occumetric.Server.Areas.Shared;
 using Occumetric.Server.Areas.TaskCategories;
 using Occumetric.Server.Areas.Tenants;
@@ -34,10 +34,12 @@ namespace Occumetric.Server.Data
         public DbSet<TaskCategory> TaskCategories { get; set; }
         public DbSet<MasterTask> MasterTasks { get; set; }
         public DbSet<TaskCategoryMap> TaskCategoryMaps { get; set; }
-        public DbSet<SnooksQueryView> SnooksPercentages { get; set; }
-        public DbSet<LiftOriginType> LiftOriginTypes { get; set; }
-        public DbSet<LiftFrequencyType> LiftFrequencyTypes { get; set; }
-        public DbSet<LiftDurationType> LiftDurationTypes { get; set; }
+
+        //public DbSet<SnooksQueryView> SnooksPercentages { get; set; }
+        //public DbSet<LiftOriginType> LiftOriginTypes { get; set; }
+        //public DbSet<LiftFrequencyType> LiftFrequencyTypes { get; set; }
+        //public DbSet<LiftDurationType> LiftDurationTypes { get; set; }
+        public DbSet<EffortType> EffortTypes { get; set; }
 
         /// <summary>
         /// </summary>
@@ -73,7 +75,8 @@ namespace Occumetric.Server.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-            builder.Entity<SnooksQueryView>().HasNoKey();
+
+            //builder.Entity<SnooksQueryView>().HasNoKey();
             base.OnModelCreating(builder);
         }
     }

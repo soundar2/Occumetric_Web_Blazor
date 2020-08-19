@@ -38,5 +38,11 @@ namespace Occumetric.Client.Helpers
             var result = await _httpClient.GetFromJsonAsync<List<MasterTaskViewModel>>($"api/v1/masterTasks/industry/{industryId}/category/{CategoryId}");
             return result;
         }
+
+        public async Task<List<EffortTypeViewModel>> GetEffortTypes()
+        {
+            var result = await _httpClient.GetFromJsonAsync<List<EffortTypeViewModel>>("api/v1/effortTypes");
+            return result;
+        }
     }
 }

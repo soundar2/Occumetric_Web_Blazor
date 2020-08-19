@@ -3,6 +3,7 @@
 @using Occumetric.Client.Shared
 @inject HttpClient _httpClient
 @inject ICommonHttpService _commonHttpService
+@inject IGlobalsService _globalsService
 <h3>Create Master Task</h3>
 
 <EditForm Model="_createMasterTaskDto" OnValidSubmit="OnValidSubmit">
@@ -16,13 +17,35 @@
     </div>
 
     <div class="form-group">
+        <label for="_createMasterTaskDto.EffortType">Effort Type:</label>
+        <div>
+            <InputSelect class="form-control" @bind-Value="@_createMasterTaskDto.EffortType">
+                @foreach (var item in _effortTypes)
+                {
+                    <option value="@item.Type">@item.Type</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => _createMasterTaskDto.EffortType)" />
+        </div>
+    </div>
+
+    @if (_createMasterTaskDto.EffortType.Contains("Manual"))
+    {
+        <div class="form-group">
+            <label for="_createMasterTaskDto.ShortDescription">Description (for Manual Tasks):</label>
+            <div>
+                <InputText class="form-control" @bind-Value="_createMasterTaskDto.ShortDescription"></InputText>
+            </div>
+        </div>
+    }
+
+    <div class="form-group">
         <label for="_createMasterTaskDto.WeightLb">Weight to Lift:</label>
         <div>
             <InputNumber class="form-control" @bind-Value="_createMasterTaskDto.WeightLb"></InputNumber>
             <ValidationMessage For="@(() => _createMasterTaskDto.WeightLb)" />
         </div>
     </div>
-
     <div class="form-group">
         <label for="_createMasterTaskDto.FromHeight">Begin Lift:</label>
         <div>
@@ -66,6 +89,7 @@
     private CreateMasterTaskDto _createMasterTaskDto = new CreateMasterTaskDto();
     private List<IndustryViewModel> _industries = new List<IndustryViewModel>();
     private List<TaskCategoryViewModel> _selectedCategories = new List<TaskCategoryViewModel>();
+    private List<EffortTypeViewModel> _effortTypes = new List<EffortTypeViewModel>();
     private string _createdResult = "";
     private string _errorMessage = "error";
     private async void OnValidSubmit()
@@ -101,6 +125,7 @@
     {
         base.OnInitialized();
         _industries = await _commonHttpService.GetAllIndustries();
+        _effortTypes = await _globalsService.GetEffortTypes();
         StateHasChanged();
 
     }

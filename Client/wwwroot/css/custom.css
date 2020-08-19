@@ -1,0 +1,82 @@
+div.movie {
+  margin: 1rem;
+  margin-bottom: 2rem;
+  border: 1px solid teal;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+div.movie a.movie-poster img {
+  height: 300px;
+}
+div.movie .delete {
+  background-color: red;
+  color: white;
+}
+div.movie-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+div.sidebar {
+  overflow: scroll !important;
+}
+#master-tasks td {
+  vertical-align: middle;
+}
+div.snooks {
+  display: grid;
+  grid-template-columns: 4rem 5rem 4rem;
+  max-width: 13rem;
+  align-items: center;
+}
+div.snooks div.sex {
+  /*text-align: right;*/
+
+  justify-self: end;
+  padding-right: 0.5rem;
+}
+div.snooks div.bar div {
+  height: 80%;
+  min-height: 0.5rem;
+  top: 10%;
+  background-color: teal;
+  max-width: 5rem;
+}
+div.snooks div.bar div.male {
+  background-color: blue;
+  width: 4rem;
+}
+div.snooks div.bar div.female {
+  background-color: magenta;
+  width: 2.5rem;
+}
+div.snooks div.value {
+  padding-left: 0.5rem;
+  text-align: left;
+  justify-self: start;
+}
+div.niosh-badge {
+  font-weight: bold;
+}
+div.niosh-badge .high {
+  padding: 0.25rem;
+  border-radius: 5px;
+  background-color: #ff4f1e;
+  color: white;
+  border: solid 1px #b32f0b;
+}
+div.niosh-badge .medium {
+  padding: 0.25rem;
+  border-radius: 5px;
+  background-color: #ffeb07;
+  color: black;
+  border: solid 1px #b3a830;
+}
+div.niosh-badge .low {
+  padding: 0.25rem;
+  border-radius: 5px;
+  color: black;
+  background-color: #c9ff82;
+  border: solid 1px #7db337;
+}

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Occumetric.Server.Areas.EffortTypes;
 using Occumetric.Server.Areas.Industries;
 using Occumetric.Server.Areas.MasterTasks;
 using Occumetric.Server.Areas.TaskCategories;
@@ -22,6 +23,8 @@ namespace Occumetric.Server.Areas.Shared
             CreateMap<CreateMasterTaskDto, MasterTask>();
             CreateMap<UpdateMasterTaskDto, MasterTask>();
             CreateMap<MasterTask, MasterTaskViewModel>();
+
+            CreateMap<EffortType, EffortTypeViewModel>();
         }
     }
 }

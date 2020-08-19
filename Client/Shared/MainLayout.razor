@@ -1,5 +1,5 @@
 ﻿@inherits LayoutComponentBase
-
+@inject ICommonHttpService _commonHttpService
 <div class="sidebar">
     <NavMenu />
 </div>
@@ -18,4 +18,5 @@
 </div>
 @code {
     private Globals Globals = new Globals();
+
 }

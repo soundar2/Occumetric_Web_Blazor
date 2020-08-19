@@ -5,11 +5,18 @@ namespace Occumetric.Shared
 {
     public class CreateMasterTaskDto
     {
+        public CreateMasterTaskDto()
+        {
+            EffortType = "Lift";
+        }
+
         [Required]
         public string Name { get; set; }
 
         [Required]
         public string EffortType { get; set; }
+
+        public string ShortDescription { get; set; }
 
         public double? WeightLb { get; set; }
 

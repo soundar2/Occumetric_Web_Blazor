@@ -8,8 +8,15 @@
 <a href="/masterTasks/create" class="btn btn-primary">Create Master Task</a>
 <h3>Result</h3>
 <button @onclick="FetchData">Fetch Data</button>
+@if (_isLoading)
+{
+    <h3>Loading....</h3>
+}
 @if (_masterTaskViewModels?.Count > 0)
 {
+
+    <input type="checkbox" @bind="_showCategories" />
+
     <table class="table table-striped">
         <thead>
             <tr>
@@ -18,7 +25,18 @@
                 </td>
                 <th>Id</th>
                 <th>Name</th>
-                <th>Categories</th>
+                <th>Type</th>
+                <th>
+                    Description (for Manual Tasks)
+                </th>
+                <th>Weight to Lift (lb.)</th>
+                <th>
+                    Niosh Index
+                </th>
+                @if (_showCategories)
+                {
+                    <th>Categories</th>
+                }
                 <th>Edit</th>
             </tr>
         </thead>
@@ -37,12 +55,24 @@
                         @item.Name
                     </td>
                     <td>
-                        @foreach (var tcv in item.TaskCategoryViewModels)
-                        {
-                            @tcv.Name
-                            <br />
-                        }
+                        @item.EffortType
                     </td>
+                    <td>
+                        @item.WeightLb
+                    </td>
+                    <td>
+                        <NioshBadge NioshValue="@item.LiftingIndex"></NioshBadge>
+                    </td>
+                    @if (_showCategories)
+                    {
+                        <td>
+                            @foreach (var tcv in item.TaskCategoryViewModels)
+                            {
+                                @tcv.Name
+                                <br />
+                            }
+                        </td>
+                    }
                     <td>
                         <a href="@($"/masterTasks/update/{item.Id}")" class="btn btn-primary">Edit</a>
                     </td>
@@ -60,7 +90,8 @@ else
     private int _rowNo = 0;
     private List<MasterTaskViewModel> _masterTaskViewModels { get; set; }
     private string _errorMessage = "";
-
+    private bool _isLoading = true;
+    private bool _showCategories = false;
     protected async override void OnInitialized()
     {
         base.OnInitialized();
@@ -72,9 +103,9 @@ else
     {
         try
         {
-            var response = await _commonHttpService.GetMasterTasksForIndustry(IndustryId);
-            _masterTaskViewModels = await _httpClient.GetFromJsonAsync<List<MasterTaskViewModel>>($"api/v1/masterTasks/industry/{IndustryId}");
+            _masterTaskViewModels = await _commonHttpService.GetMasterTasksForIndustry(IndustryId);
             _rowNo = 0;
+            _isLoading = false;
             StateHasChanged();
         }
         catch (Exception e)
@@ -84,5 +115,9 @@ else
             _errorMessage = e.Message;
 
         }
+    }
+    private void ToggleShowCategories()
+    {
+        _showCategories = !_showCategories;
     }
 }

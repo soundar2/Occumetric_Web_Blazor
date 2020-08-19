@@ -22,6 +22,7 @@ namespace Occumetric.Client
             // server project
             builder.Services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("Occumetric.ServerAPI"));
             builder.Services.AddTransient<ICommonHttpService, CommonHttpService>();
+            builder.Services.AddSingleton<IGlobalsService, GlobalsService>();
 
             builder.Services.AddApiAuthorization();
 

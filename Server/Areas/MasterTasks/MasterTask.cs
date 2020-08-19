@@ -1,7 +1,9 @@
 ﻿using Occumetric.Server.Areas.Industries;
+using Occumetric.Server.Areas.TaskCategories;
 using Occumetric.Server.Models;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace Occumetric.Server.Areas.MasterTasks
 {
@@ -53,5 +55,10 @@ namespace Occumetric.Server.Areas.MasterTasks
         }
 
         #endregion Navigation
+
+        public List<TaskCategory> TaskCategories()
+        {
+            return (from map in TaskCategoryMaps where map.MasterTaskId == this.Id select map.TaskCategory).ToList();
+        }
     }
 }

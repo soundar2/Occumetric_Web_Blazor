@@ -2,6 +2,7 @@
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using Occumetric.Server.Areas.EffortTypes;
 using Occumetric.Server.Areas.Industries;
 using Occumetric.Server.Areas.MasterTasks;
 using Occumetric.Server.Areas.TaskCategories;
@@ -21,6 +22,7 @@ namespace Occumetric.Server.Areas.Shared
             services.AddTransient<ITenantService, TenantService>();
             services.AddTransient<ITaskCategoryService, TaskCategoryService>();
             services.AddTransient<IMasterTaskService, MasterTaskService>();
+            services.AddTransient<IEffortTypeService, EffortTypeService>();
 
             //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
             //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));

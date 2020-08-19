@@ -39,7 +39,7 @@ namespace Occumetric.Shared
         public virtual List<TaskCategoryViewModel> TaskCategoryViewModels
         {
             get => _taskCategoryViewModels ?? (_taskCategoryViewModels = new List<TaskCategoryViewModel>());
-            protected set => _taskCategoryViewModels = value;
+            set => _taskCategoryViewModels = value;
         }
     }
 }

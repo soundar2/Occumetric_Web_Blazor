@@ -1,0 +1,22 @@
+﻿@if (NioshValue >= 0)
+{
+    <div class="niosh-badge">
+        <span class="@NioshClass(NioshValue)"> @NioshValue.ToString("0.00")</span>
+    </div>
+}
+@code {
+    [Parameter] public double NioshValue { get; set; } = -1;
+    private string NioshClass(double lifting_index)
+    {
+        if (lifting_index >= 3)
+        {
+            return "high";
+        }
+        else if (lifting_index > 1 && lifting_index <= 3)
+        {
+            return "medium";
+        }
+        else
+            return "low";
+    }
+}

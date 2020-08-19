@@ -5,9 +5,9 @@ namespace Occumetric.Server.Areas.MasterTasks
 {
     public interface IMasterTaskService
     {
-        List<MasterTaskViewModel> GetMasterTaskForIndustry(int IndustryId);
+        List<MasterTaskViewModel> GetMasterTasks(int IndustryId, int CategoryId = 0);
 
-        List<MasterTaskViewModel> GetMasterTaskForCategory(int industryId, int CategoryId);
+        //List<MasterTaskViewModel> GetMasterTaskForCategory(int industryId, int CategoryId);
 
         public MasterTaskViewModel Get(int id);
 

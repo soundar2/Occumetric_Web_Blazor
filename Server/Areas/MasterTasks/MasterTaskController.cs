@@ -23,7 +23,7 @@ namespace Occumetric.Server.Areas.MasterTasks
         {
             try
             {
-                var result = await Task.Run(() => _masterTaskService.GetMasterTaskForIndustry(IndustryId));
+                var result = await Task.Run(() => _masterTaskService.GetMasterTasks(IndustryId));
                 return Ok(result);
             }
             catch (Exception e)
@@ -37,7 +37,7 @@ namespace Occumetric.Server.Areas.MasterTasks
         {
             try
             {
-                var result = await Task.Run(() => _masterTaskService.GetMasterTaskForCategory(IndustryId, CategoryId));
+                var result = await Task.Run(() => _masterTaskService.GetMasterTasks(IndustryId, CategoryId));
                 return Ok(result);
             }
             catch (Exception e)

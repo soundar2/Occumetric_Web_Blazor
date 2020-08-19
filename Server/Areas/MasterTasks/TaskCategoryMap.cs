@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Occumetric.Server.Areas.MasterTasks
 {
+    [Table("task_category_master_tasks")]
     public class TaskCategoryMap : BaseEntity
     {
         [Column("task_category_id")]
