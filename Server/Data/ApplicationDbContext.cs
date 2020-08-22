@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Occumetric.Server.Areas.EffortTypes;
+using Occumetric.Server.Areas.Helpers;
 using Occumetric.Server.Areas.Industries;
 using Occumetric.Server.Areas.MasterTasks;
 using Occumetric.Server.Areas.Shared;
@@ -35,11 +35,15 @@ namespace Occumetric.Server.Data
         public DbSet<MasterTask> MasterTasks { get; set; }
         public DbSet<TaskCategoryMap> TaskCategoryMaps { get; set; }
 
-        //public DbSet<SnooksQueryView> SnooksPercentages { get; set; }
-        //public DbSet<LiftOriginType> LiftOriginTypes { get; set; }
-        //public DbSet<LiftFrequencyType> LiftFrequencyTypes { get; set; }
-        //public DbSet<LiftDurationType> LiftDurationTypes { get; set; }
         public DbSet<EffortType> EffortTypes { get; set; }
+
+        public DbSet<FrequencyMultiplier> FrequencyMultipliers { get; set; }
+        public DbSet<LiftDurationType> LiftDurationType { get; set; }
+        public DbSet<LiftOriginType> LiftOriginTypes { get; set; }
+        public DbSet<LiftFrequencyType> LiftFrequencyTypes { get; set; }
+
+        public DbSet<SnooksCriteria> SnooksCriteria { get; set; }
+        public DbSet<SnooksPercentage> SnooksPercentages { get; set; }
 
         /// <summary>
         /// </summary>

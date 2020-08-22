@@ -8,77 +8,99 @@
 
 <EditForm Model="_createMasterTaskDto" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator />
-    <div class="form-group">
-        <label for="_createMasterTaskDto.Name">Name:</label>
-        <div>
-            <InputText class="form-control" @bind-Value="_createMasterTaskDto.Name"></InputText>
-            <ValidationMessage For="@(() => _createMasterTaskDto.Name)" />
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label for="_createMasterTaskDto.EffortType">Effort Type:</label>
-        <div>
-            <InputSelect class="form-control" @bind-Value="@_createMasterTaskDto.EffortType">
-                @foreach (var item in _effortTypes)
-                {
-                    <option value="@item.Type">@item.Type</option>
-                }
-            </InputSelect>
-            <ValidationMessage For="@(() => _createMasterTaskDto.EffortType)" />
-        </div>
-    </div>
-
-    @if (_createMasterTaskDto.EffortType.Contains("Manual"))
-    {
-        <div class="form-group">
-            <label for="_createMasterTaskDto.ShortDescription">Description (for Manual Tasks):</label>
-            <div>
-                <InputText class="form-control" @bind-Value="_createMasterTaskDto.ShortDescription"></InputText>
-            </div>
-        </div>
-    }
-
-    <div class="form-group">
-        <label for="_createMasterTaskDto.WeightLb">Weight to Lift:</label>
-        <div>
-            <InputNumber class="form-control" @bind-Value="_createMasterTaskDto.WeightLb"></InputNumber>
-            <ValidationMessage For="@(() => _createMasterTaskDto.WeightLb)" />
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="_createMasterTaskDto.FromHeight">Begin Lift:</label>
-        <div>
-            <InputText class="form-control" @bind-Value="_createMasterTaskDto.FromHeight"></InputText>
-            <ValidationMessage For="@(() => _createMasterTaskDto.FromHeight)" />
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label for="_createMasterTaskDto.ToHeight">End Lift:</label>
-        <div>
-            <InputText class="form-control" @bind-Value="_createMasterTaskDto.ToHeight"></InputText>
-            <ValidationMessage For="@(() => _createMasterTaskDto.ToHeight)" />
-        </div>
-    </div>
+    <table class="table table-striped">
+        <tr>
+            <td>
+                Name:
+            </td>
+            <td>
+                <InputText class="form-control required" @bind-Value="_createMasterTaskDto.Name"></InputText>
+                <ValidationMessage For="@(() => _createMasterTaskDto.Name)" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Effort Type:
+            </td>
+            <td>
+                <InputSelect class="form-control required" @bind-Value="@_createMasterTaskDto.EffortType" @onblur="CalculateNioshIndex">
+                    @foreach (var item in _effortTypes)
+                    {
+                        <option value="@item.Type">@item.Type</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => _createMasterTaskDto.EffortType)" />
+            </td>
+        </tr>
+        @if (_createMasterTaskDto.EffortType.Contains("Manual"))
+        {
+            <tr class="animate__animated animate__bounceInLeft ">
+                <td>
+                    Description (for Manual Tasks):
+                </td>
+                <td>
+                    <InputText class="form-control required" @bind-Value="_createMasterTaskDto.ShortDescription"></InputText>
+                </td>
+            </tr>
+        }
+        <tr>
+            <td>
+                Weight to Lift:
+            </td>
+            <td>
+                <input type="text" @bind-value="WtLb" @onblur="CalculateNioshIndex" />
+                @*<InputNumber class="form-control required" @bind-Value="_weightLb"></InputNumber>*@
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Begin Lift:
+            </td>
+            <td>
+                <InputText class="form-control" @bind-Value="_fromHeight" @onblur="CalculateNioshIndex"></InputText>
+                <ValidationMessage For="@(() => _createMasterTaskDto.FromHeight)" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                End Lift:
+            </td>
+            <td>
+                <InputText class="form-control" @bind-Value="_toHeight" @onblur="CalculateNioshIndex"></InputText>
+                <ValidationMessage For="@(() => _createMasterTaskDto.ToHeight)" />
+            </td>
+        </tr>
+        @if (_createMasterTaskDto.EffortType.Contains("Lift") && WtLb > 0)
+        {
+            <tr>
+                <td>
+                    Niosh Index:
+                </td>
+                <td>
+                    <NioshBadge NioshValue="_nioshIndex"></NioshBadge>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Snooks:
+                </td>
+                <td>
+                    @_snooksViewModel.StrMalePercentage
+                    <br />
+                    @_snooksViewModel.StrFemalePercentage
+                </td>
+            </tr>
+        }
+    </table>
 
     <div class="form-group">
         <label>Assign To Industries:</label>
+        <SelectIndustries SelectedIndustries="_selectedIndustries" OnSelectedIndustriesChanged="SelectedIndustriesChanged"></SelectIndustries>
     </div>
     <div class="form-group">
         <label>Assign To Categories:</label>
         <SelectCategories SelectedCategories="_selectedCategories" OnSelectedCategoriesChanged="SelectedCategoriesChanged"></SelectCategories>
     </div>
-
-    <b>Selected Categories</b>
-    <ul>
-        @foreach (var item in _selectedCategories)
-        {
-            <li>
-                @item.Name
-            </li>
-        }
-    </ul>
 
     <b>@_createdResult</b>
     <br />
@@ -89,9 +111,12 @@
     private CreateMasterTaskDto _createMasterTaskDto = new CreateMasterTaskDto();
     private List<IndustryViewModel> _industries = new List<IndustryViewModel>();
     private List<TaskCategoryViewModel> _selectedCategories = new List<TaskCategoryViewModel>();
+    private List<IndustryViewModel> _selectedIndustries = new List<IndustryViewModel>();
     private List<EffortTypeViewModel> _effortTypes = new List<EffortTypeViewModel>();
     private string _createdResult = "";
     private string _errorMessage = "error";
+
+    //
     private async void OnValidSubmit()
     {
         try
@@ -121,6 +146,7 @@
         }
         StateHasChanged();
     }
+    //
     protected async override void OnInitialized()
     {
         base.OnInitialized();
@@ -129,9 +155,87 @@
         StateHasChanged();
 
     }
-
+    //
     private void SelectedCategoriesChanged(List<TaskCategoryViewModel> items)
     {
         _selectedCategories = items;
     }
+    //
+    private void SelectedIndustriesChanged(List<IndustryViewModel> items)
+    {
+        _selectedIndustries = items;
+    }
+    //
+
+    private int _wtLb = 20;
+    private string _fromHeight = "30 inches";
+    private string _toHeight = "40 inches";
+    private double _nioshIndex = 0;
+    private SnooksViewModel _snooksViewModel = new SnooksViewModel();
+    public int WtLb
+    {
+        get { return _wtLb; }
+        set
+        {
+            _wtLb = value;
+            _createMasterTaskDto.WeightLb = _wtLb;
+            CalculateNioshIndex();
+        }
+
+    }
+    public string FromHeight
+    {
+        get { return _fromHeight; }
+        set
+        {
+            _fromHeight = value;
+            _createMasterTaskDto.FromHeight = _fromHeight;
+            CalculateNioshIndex();
+        }
+
+    }
+    public string ToHeight
+    {
+        get { return _toHeight; }
+        set
+        {
+            _toHeight = value;
+            _createMasterTaskDto.ToHeight = _toHeight;
+            CalculateNioshIndex();
+        }
+
+    }
+    private async void CalculateNioshIndex()
+    {
+        var nioshDto = new NioshCalculateDto
+        {
+            EffortType = _createMasterTaskDto.EffortType,
+            WeightLb = _wtLb,
+            FromHeight = Utility.SanitizeStringToInteger(_fromHeight),
+            ToHeight = Utility.SanitizeStringToInteger(_toHeight)
+        };
+        _nioshIndex = await _commonHttpService.GetNioshIndex(nioshDto);
+        //
+        //also calculate snooks
+        //
+        await CalculateSnooks();
+        StateHasChanged();
+    }
+    private async Task CalculateSnooks()
+    {
+        var snooksDto = new SnooksCalculateDto
+        {
+            EffortType = _createMasterTaskDto.EffortType,
+            WeightLb = _wtLb,
+            FromHeight = Utility.SanitizeStringToInteger(_fromHeight),
+            ToHeight = Utility.SanitizeStringToInteger(_toHeight)
+        };
+        _snooksViewModel = await _commonHttpService.GetSnooksValues(snooksDto);
+    }
 }
+
+<style>
+    .required {
+        box-shadow: 2px 2px 10px rgba(200, 0, 0, 0.85);
+    }
+</style>

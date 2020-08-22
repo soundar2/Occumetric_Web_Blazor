@@ -41,8 +41,34 @@ namespace Occumetric.Client.Helpers
 
         public async Task<List<EffortTypeViewModel>> GetEffortTypes()
         {
-            var result = await _httpClient.GetFromJsonAsync<List<EffortTypeViewModel>>("api/v1/effortTypes");
+            var result = await _httpClient.GetFromJsonAsync<List<EffortTypeViewModel>>("api/v1/helpers/effortTypes");
             return result;
+        }
+
+        public async Task<List<LiftDurationTypeViewModel>> GetLiftDurationTypes()
+        {
+            var result = await _httpClient.GetFromJsonAsync<List<LiftDurationTypeViewModel>>("api/v1/helpers/liftDurationTypes");
+            return result;
+        }
+
+        public async Task<List<LiftFrequencyTypeViewModel>> GetLiftFrequencyTypes()
+        {
+            var result = await _httpClient.GetFromJsonAsync<List<LiftFrequencyTypeViewModel>>("api/v1/helpers/liftFrequencyTypes");
+            return result;
+        }
+
+        public async Task<double> GetNioshIndex(NioshCalculateDto dto)
+        {
+            var response = await _httpClient.PostAsJsonAsync<NioshCalculateDto>("api/v1/helpers/nioshIndex", dto);
+            var nioshIndex = response.Content.ReadFromJsonAsync<double>().Result;
+            return nioshIndex;
+        }
+
+        public async Task<SnooksViewModel> GetSnooksValues(SnooksCalculateDto dto)
+        {
+            var response = await _httpClient.PostAsJsonAsync<SnooksCalculateDto>("api/v1/helpers/snooks", dto);
+            var viewModel = response.Content.ReadFromJsonAsync<SnooksViewModel>().Result;
+            return viewModel;
         }
     }
 }

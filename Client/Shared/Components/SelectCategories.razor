@@ -1,6 +1,5 @@
 ﻿@using Occumetric.Shared
 @inject ICommonHttpService _commonHttpService
-<h3>SelectCategories</h3>
 <table>
     <tr>
         <td>
@@ -18,31 +17,32 @@
         </td>
         <td>
             <button @onclick="MoveRight">Move Right</button>
-            <br />
-            <button @onclick="DeleteRight">Delete</button>
         </td>
         <td>
-            @foreach (var item in _rightList)
-            {
-                <div class="checkbox">
-                    <label>
-                        <input type="checkbox" @bind="item.IsChecked" />
-                    </label>
-                    @item.Name
-                </div>
-            }
+            <table>
+
+                @foreach (var item in _rightList)
+                {
+                    <tr class="animate__animated animate__bounceInLeft">
+                        <td>
+                            <div class="checkbox ">
+                                <label>
+                                    <input type="checkbox" @bind="item.IsChecked" />
+                                </label>
+                                @item.Name
+                            </div>
+                        </td>
+                    </tr>
+
+                }
+            </table>
+        </td>
+        <td>
+            <button @onclick="DeleteRight">Delete</button>
         </td>
     </tr>
 </table>
-<b>Selected Categories</b>
-<ul>
-    @foreach (var item in SelectedCategories.OrderBy(x => x.Name))
-    {
-        <li>
-            @item.Name
-        </li>
-    }
-</ul>
+
 @code {
     [Parameter] public List<TaskCategoryViewModel> SelectedCategories { get; set; } //input
     private List<TaskCategoryViewModel> _leftList = new List<TaskCategoryViewModel>();
@@ -69,7 +69,7 @@
             item.IsChecked = false;
             _rightList.Add(item);
         }
-
+        _rightList = (from item in _rightList orderby item.Name select item).ToList();
         await SetSelectedCategories();
     }
     protected async Task DeleteRight()
@@ -83,3 +83,13 @@
     }
 
 }
+
+<style>
+    div.left-list, div.right-list {
+        padding: .5rem;
+        border: 1px solid gray;
+        max-height: 20rem;
+        height: 20rem !important;
+        overflow: scroll;
+    }
+</style>

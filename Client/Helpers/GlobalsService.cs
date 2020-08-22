@@ -17,6 +17,7 @@ namespace Occumetric.Client.Helpers
 
         private List<EffortTypeViewModel> _effortTypeViewModels = new List<EffortTypeViewModel>();
 
+        //------------------------
         public async Task<List<EffortTypeViewModel>> GetEffortTypes()
         {
             if (_effortTypeViewModels.Count == 0)
@@ -25,5 +26,19 @@ namespace Occumetric.Client.Helpers
             }
             return _effortTypeViewModels;
         }
+
+        //------------------------
+        private List<IndustryViewModel> _industryViewModels = new List<IndustryViewModel>();
+
+        public async Task<List<IndustryViewModel>> GetIndustrys()
+        {
+            if (_industryViewModels.Count == 0)
+            {
+                _industryViewModels = await _httpService.GetAllIndustries();
+            }
+            return _industryViewModels;
+        }
+
+        //------------------------
     }
 }

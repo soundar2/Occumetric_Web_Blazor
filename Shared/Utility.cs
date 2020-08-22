@@ -1,15 +1,10 @@
-﻿using System.Linq;
-using System;
-using System.Collections.Generic;
-using IdentityServer4.Extensions;
-
-namespace Occumetric.Server.Areas.Shared
+﻿namespace Occumetric.Shared
 {
-    public class PdaUtility
+    public class Utility
     {
-        public static int SanitizeString(string str)
+        public static int SanitizeStringToInteger(string str)
         {
-            if (str.IsNullOrEmpty()) return 0;
+            if (string.IsNullOrEmpty(str)) return 0;
             str = str.ToLower()
                 .Replace("\"", string.Empty)
                 .Replace(",", string.Empty)

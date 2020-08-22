@@ -15,7 +15,7 @@ namespace Occumetric.Server.Areas.MasterTasks
 
         public string EffortType { get; set; }
 
-        public double? WeightLb { get; set; }
+        public double WeightLb { get; set; }
 
         public string FromHeight { get; set; }
 

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Occumetric.Server.Areas.EffortTypes;
+using Occumetric.Server.Areas.Helpers;
 using Occumetric.Server.Areas.Industries;
 using Occumetric.Server.Areas.MasterTasks;
 using Occumetric.Server.Areas.TaskCategories;
@@ -24,7 +24,12 @@ namespace Occumetric.Server.Areas.Shared
             CreateMap<UpdateMasterTaskDto, MasterTask>();
             CreateMap<MasterTask, MasterTaskViewModel>();
 
+            //
+            //helpers
+            //
+            CreateMap<LiftDurationType, LiftDurationTypeViewModel>();
             CreateMap<EffortType, EffortTypeViewModel>();
+            CreateMap<LiftFrequencyType, LiftFrequencyTypeViewModel>();
         }
     }
 }

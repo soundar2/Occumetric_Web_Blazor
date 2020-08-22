@@ -18,7 +18,7 @@ namespace Occumetric.Shared
 
         public string ShortDescription { get; set; }
 
-        public double? WeightLb { get; set; }
+        public double WeightLb { get; set; }
 
         public string FromHeight { get; set; }
 

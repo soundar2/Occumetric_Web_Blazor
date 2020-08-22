@@ -9,5 +9,7 @@ namespace Occumetric.Client.Helpers
         public int IndustryId { get; set; }
 
         Task<List<EffortTypeViewModel>> GetEffortTypes();
+
+        Task<List<IndustryViewModel>> GetIndustrys();
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Occumetric.Server.Areas.EffortTypes
+namespace Occumetric.Server.Areas.Helpers
 {
     [Table("effort_types")]
     public class EffortType

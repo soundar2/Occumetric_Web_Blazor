@@ -15,5 +15,9 @@ namespace Occumetric.Client.Helpers
         Task<List<MasterTaskViewModel>> GetMasterTasksForCategory(int industryId, int CategoryId);
 
         Task<List<EffortTypeViewModel>> GetEffortTypes();
+
+        Task<double> GetNioshIndex(NioshCalculateDto dto);
+
+        Task<SnooksViewModel> GetSnooksValues(SnooksCalculateDto dto);
     }
 }
