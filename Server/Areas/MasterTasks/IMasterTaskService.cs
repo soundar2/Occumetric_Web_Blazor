@@ -11,7 +11,7 @@ namespace Occumetric.Server.Areas.MasterTasks
 
         public MasterTaskViewModel Get(int id);
 
-        public int Create(CreateMasterTaskDto dto);
+        public void Create(CreateMasterTaskDto dto);
 
         public void Update(UpdateMasterTaskDto dto);
     }

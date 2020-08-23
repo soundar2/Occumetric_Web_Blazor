@@ -16,9 +16,9 @@
             </div>
         </td>
         <td>
-            <button @onclick="MoveRight">Move Right</button>
+            <button @onclick="MoveRightClicked" @onclick:preventDefault="true">Move Right</button>
             <br />
-            <button @onclick="DeleteRight">Delete</button>
+            <button @onclick="DeleteRightClicked" @onclick:preventDefault="true">Delete</button>
         </td>
         <td>
             @foreach (var item in _rightList)
@@ -49,7 +49,7 @@
         StateHasChanged();
 
     }
-    protected async Task MoveRight()
+    protected async Task MoveRightClicked()
     {
         var leftIds = (from item in _leftList where item.IsChecked select item.Id).ToList();
         var rightIds = (from item in _rightList select item.Id).ToList();
@@ -63,7 +63,7 @@
 
         await SetSelectedIndustries();
     }
-    protected async Task DeleteRight()
+    protected async Task DeleteRightClicked()
     {
         _rightList.RemoveAll(x => x.IsChecked);
         await SetSelectedIndustries();

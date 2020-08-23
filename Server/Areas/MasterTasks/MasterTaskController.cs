@@ -62,15 +62,15 @@ namespace Occumetric.Server.Areas.MasterTasks
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult<StringResult>> Create([FromBody] CreateMasterTaskDto dto)
+        public async Task<IActionResult> Create([FromBody] CreateMasterTaskDto dto)
         {
-            var createdId = await Task.Run(() =>
+            await Task.Run(() =>
             {
-                return _masterTaskService.Create(dto);
+                _masterTaskService.Create(dto);
             });
             return Ok(new StringResult
             {
-                Result = createdId.ToString()
+                Result = "Created"
             });
         }
 

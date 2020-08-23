@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Occumetric.Server.Areas.Helpers;
 using Occumetric.Server.Areas.Shared;
 using Occumetric.Server.Data;
 using Occumetric.Shared;
@@ -9,8 +10,11 @@ namespace Occumetric.Server.Areas.MasterTasks
 {
     public class MasterTaskService : OccumetricServiceBase, IMasterTaskService
     {
-        public MasterTaskService(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
+        private readonly IHelperService _helperService;
+
+        public MasterTaskService(ApplicationDbContext context, IMapper mapper, IHelperService helperService) : base(context, mapper)
         {
+            _helperService = helperService;
         }
 
         public List<MasterTaskViewModel> GetMasterTasks(int IndustryId, int CategoryId = 0)
@@ -68,16 +72,60 @@ namespace Occumetric.Server.Areas.MasterTasks
             return _mapper.Map<MasterTaskViewModel>(_context.MasterTasks.Find(id));
         }
 
-        public int Create(CreateMasterTaskDto dto)
+        public void Create(CreateMasterTaskDto dto)
         {
+            //
+            //make sure this task name is unique
+            //
+            if (_context.MasterTasks.Any(x => x.Name == dto.Name))
+            {
+                throw new System.Exception("Task name already exists.");
+            }
+
             var mt = _mapper.Map<MasterTask>(dto);
+
+            var intFromHeight = Utility.SanitizeStringToInteger(dto.FromHeight);
+            var intToHeight = Utility.SanitizeStringToInteger(dto.ToHeight);
+
+            var snooksValues = _helperService.CalculateSnooks(new SnooksCalculateDto
+            {
+                EffortType = mt.EffortType,
+                FromHeight = intFromHeight,
+                ToHeight = intToHeight,
+                WeightLb = (int)dto.WeightLb
+            });
+
+            mt.SnooksMale = snooksValues.StrMalePercentage;
+            mt.SnooksFemale = snooksValues.StrFemalePercentage;
+
+            var nioshIndex = _helperService.GetNioshIndex(new NioshCalculateDto
+            {
+                EffortType = dto.EffortType,
+                FromHeight = intFromHeight,
+                ToHeight = intToHeight,
+                WeightLb = (int)dto.WeightLb
+            });
+
+            mt.LiftingIndex = nioshIndex;
             foreach (var id in dto.IndustryIds)
             {
+                //becuase we are creating multiple tasks
+                //we have to clone this
+                //
+                var mtCloned = (MasterTask)mt.Clone();
                 var ind = _context.Industries.Find(id);
-                ind.MasterTasks.Add(mt);
+                ind.MasterTasks.Add(mtCloned);
+                _context.SaveChanges();
+                foreach (int categoryId in dto.CategoryIds)
+                {
+                    mtCloned.TaskCategoryMaps.Add(new TaskCategoryMap
+                    {
+                        TaskCategoryId = categoryId,
+                        MasterTaskId = mtCloned.Id
+                    });
+                }
             }
             _context.SaveChanges();
-            return mt.Id;
         }
 
         public void Update(UpdateMasterTaskDto dto)

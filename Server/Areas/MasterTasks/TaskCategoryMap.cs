@@ -1,12 +1,17 @@
 ﻿using Occumetric.Server.Areas.TaskCategories;
-using Occumetric.Server.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Occumetric.Server.Areas.MasterTasks
 {
     [Table("task_category_master_tasks")]
-    public class TaskCategoryMap : BaseEntity
+    public class TaskCategoryMap
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Column("Id")]
+        public int Id { get; set; }
+
         [Column("task_category_id")]
         public int TaskCategoryId { get; set; }
 

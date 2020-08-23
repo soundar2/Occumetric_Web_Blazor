@@ -85,9 +85,18 @@
                     Snooks:
                 </td>
                 <td>
-                    @_snooksViewModel.StrMalePercentage
-                    <br />
-                    @_snooksViewModel.StrFemalePercentage
+                    <div class="snooks">
+                        <div class="sex">Male</div>
+                        <div class="bar">
+                            <div class="male" style="width: @SnooksBarWidthRem(_snooksViewModel.IntMalePercentage)"> </div>
+                        </div>
+                        <div class="value">@_snooksViewModel.StrMalePercentage</div>
+                        <div class="sex">Female</div>
+                        <div class="bar">
+                            <div class="female" style="width: @SnooksBarWidthRem(_snooksViewModel.IntFemalePercentage)"> </div>
+                        </div>
+                        <div class="value">@_snooksViewModel.StrFemalePercentage</div>
+                    </div>
                 </td>
             </tr>
         }
@@ -121,6 +130,9 @@
     {
         try
         {
+            _createMasterTaskDto.WeightLb = WtLb;
+            _createMasterTaskDto.FromHeight = FromHeight;
+            _createMasterTaskDto.ToHeight = ToHeight;
             var response = await _httpClient.PostAsJsonAsync("api/v1/masterTasks", _createMasterTaskDto);
             Console.WriteLine("Success");
             if (response.IsSuccessStatusCode)
@@ -158,12 +170,14 @@
     //
     private void SelectedCategoriesChanged(List<TaskCategoryViewModel> items)
     {
-        _selectedCategories = items;
+        _createMasterTaskDto.CategoryIds.Clear();
+        _createMasterTaskDto.CategoryIds.AddRange(items.Select(x => x.Id).ToList());
     }
     //
     private void SelectedIndustriesChanged(List<IndustryViewModel> items)
     {
-        _selectedIndustries = items;
+        _createMasterTaskDto.IndustryIds.Clear();
+        _createMasterTaskDto.IndustryIds.AddRange(items.Select(x => x.Id).ToList());
     }
     //
 
@@ -231,6 +245,14 @@
             ToHeight = Utility.SanitizeStringToInteger(_toHeight)
         };
         _snooksViewModel = await _commonHttpService.GetSnooksValues(snooksDto);
+    }
+    private string SnooksBarWidthRem(int value)
+    {
+        //
+        //assume 100% is 5 rem
+        //
+        double d = (double)value / 20.0;
+        return d.ToString("0.0") + "rem";
     }
 }
 

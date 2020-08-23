@@ -1,6 +1,7 @@
 ﻿using Occumetric.Server.Areas.Industries;
 using Occumetric.Server.Areas.TaskCategories;
 using Occumetric.Server.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Linq;
 namespace Occumetric.Server.Areas.MasterTasks
 {
     [Table("master_tasks")]
-    public class MasterTask : BaseEntity
+    public class MasterTask : BaseEntity, ICloneable
     {
         [Column("TaskName")]
         public string Name { get; set; }
@@ -59,6 +60,11 @@ namespace Occumetric.Server.Areas.MasterTasks
         public List<TaskCategory> TaskCategories()
         {
             return (from map in TaskCategoryMaps where map.MasterTaskId == this.Id select map.TaskCategory).ToList();
+        }
+
+        public virtual object Clone()
+        {
+            return this.MemberwiseClone();
         }
     }
 }

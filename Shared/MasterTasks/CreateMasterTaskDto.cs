@@ -8,6 +8,8 @@ namespace Occumetric.Shared
         public CreateMasterTaskDto()
         {
             EffortType = "Lift";
+            IndustryIds = new List<int>();
+            CategoryIds = new List<int>(); 
         }
 
         [Required]
@@ -18,6 +20,7 @@ namespace Occumetric.Shared
 
         public string ShortDescription { get; set; }
 
+        //[Required]
         public double WeightLb { get; set; }
 
         public string FromHeight { get; set; }
@@ -26,7 +29,8 @@ namespace Occumetric.Shared
 
         public string CarryDistance { get; set; }
 
-        [Required]
+        //[Required]
         public List<int> IndustryIds { get; set; }
+        public List<int> CategoryIds { get; set; }
     }
 }
