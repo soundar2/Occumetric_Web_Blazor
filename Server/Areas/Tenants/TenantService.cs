@@ -13,7 +13,7 @@ namespace Occumetric.Server.Areas.Tenants
         {
         }
 
-        public List<TenantViewModel> Index(int IndustryId)
+        public List<TenantViewModel> GetAllTenantsForIndustry(int IndustryId)
         {
             return _mapper.Map<List<TenantViewModel>>((from t in _context.Tenants
                                                        where t.IndustryId == IndustryId

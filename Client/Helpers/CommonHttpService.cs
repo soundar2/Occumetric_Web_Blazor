@@ -70,5 +70,11 @@ namespace Occumetric.Client.Helpers
             var viewModel = response.Content.ReadFromJsonAsync<SnooksViewModel>().Result;
             return viewModel;
         }
+
+        public async Task<T> GetGeneric<T>(string url) where T : class
+        {
+            var result = await _httpClient.GetFromJsonAsync<T>(url);
+            return result;
+        }
     }
 }

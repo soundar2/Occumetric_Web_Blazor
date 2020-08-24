@@ -22,6 +22,7 @@ namespace Occumetric.Server.Areas.Shared
             //
             CreateMap<CreateMasterTaskDto, MasterTask>();
             CreateMap<UpdateMasterTaskDto, MasterTask>();
+            CreateMap<MasterTaskViewModel, UpdateMasterTaskDto>();
             CreateMap<MasterTask, MasterTaskViewModel>();
 
             //

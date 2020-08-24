@@ -11,6 +11,9 @@ namespace Occumetric.Shared
         }
 
         [Required]
+        public int Id { get; set; }
+
+        [Required]
         public string Name { get; set; }
 
         [Required]
@@ -27,7 +30,7 @@ namespace Occumetric.Shared
 
         public string CarryDistance { get; set; }
 
-        public List<TaskCategoryViewModel> _taskCategoryViewModels;
+        private List<TaskCategoryViewModel> _taskCategoryViewModels;
 
         public List<TaskCategoryViewModel> TaskCategoryViewModels
         {

@@ -1,4 +1,4 @@
-﻿@page "/tenants/{IndustryId:int}"
+﻿@page "/tenants/industry/{IndustryId:int}"
 @using Occumetric.Shared
 @inject HttpClient _httpClient
 <h3>Tenants</h3>
@@ -62,7 +62,6 @@ else
         try
         {
             Globals.IndustryId = IndustryId;
-            var response = await _httpClient.GetFromJsonAsync<TenantViewModel>($"api/v1/tenants/1");
             _tenantViewModels = await _httpClient.GetFromJsonAsync<List<TenantViewModel>>($"api/v1/tenants/industry/{IndustryId}");
             StateHasChanged();
         }

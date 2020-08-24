@@ -19,11 +19,11 @@ namespace Occumetric.Server.Areas.Tenants
         }
 
         [HttpGet("industry/{IndustryId}")]
-        public async Task<IActionResult> Index([FromRoute] int IndustryId)
+        public async Task<IActionResult> GetTenantsForIndustry([FromRoute] int IndustryId)
         {
             try
             {
-                var result = await Task.Run(() => _tenantService.Index(IndustryId));
+                var result = await Task.Run(() => _tenantService.GetAllTenantsForIndustry(IndustryId));
                 return Ok(result);
             }
             catch (Exception e)

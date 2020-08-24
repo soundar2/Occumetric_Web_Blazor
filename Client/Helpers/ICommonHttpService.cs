@@ -19,5 +19,7 @@ namespace Occumetric.Client.Helpers
         Task<double> GetNioshIndex(NioshCalculateDto dto);
 
         Task<SnooksViewModel> GetSnooksValues(SnooksCalculateDto dto);
+
+        Task<T> GetGeneric<T>(string url) where T : class;
     }
 }

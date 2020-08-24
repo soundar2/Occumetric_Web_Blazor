@@ -55,6 +55,14 @@
     {
         base.OnInitialized();
         _leftList = await _commonHttpService.GetTaskCategories();
+        foreach (var item in _leftList)
+        {
+            if (SelectedCategories.Any(x => x.Id == item.Id))
+            {
+                item.IsChecked = true;
+            };
+        }
+        await MoveRightClicked();
         StateHasChanged();
 
     }

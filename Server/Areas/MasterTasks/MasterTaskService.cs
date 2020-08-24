@@ -56,20 +56,24 @@ namespace Occumetric.Server.Areas.MasterTasks
             return mtViewModels;
         }
 
-        //public List<MasterTaskViewModel> GetMasterTaskForCategory(int industryId, int CategoryId = 0)
-        //{
-        //    var query = _context.MasterTasks.Where(x => x.IndustryId == industryId);
-        //    if (CategoryId > 0)
-        //    {
-        //        query = (from mt in query from map in _context.TaskCategoryMaps where map.TaskCategoryId == CategoryId select mt);
-        //    }
-
-        //    return _mapper.Map<List<MasterTaskViewModel>>(query).ToList();
-        //}
-
         public MasterTaskViewModel Get(int id)
         {
-            return _mapper.Map<MasterTaskViewModel>(_context.MasterTasks.Find(id));
+            var dbMasterTask = _context.MasterTasks.Find(id);
+            var dbTcList = (from map in _context.TaskCategoryMaps
+                            where map.MasterTaskId == id
+                            from tc in _context.TaskCategories
+                            where tc.Id == map.TaskCategoryId
+                            orderby tc.Name
+                            select tc).ToList();
+            MasterTaskViewModel mtViewModel = _mapper.Map<MasterTaskViewModel>(dbMasterTask);
+            mtViewModel.TaskCategoryViewModels.AddRange(_mapper.Map<List<TaskCategoryViewModel>>(dbTcList));
+            return mtViewModel;
+        }
+
+        public UpdateMasterTaskDto GetForUpdate(int id)
+        {
+            var masterTaskViewModel = this.Get(id);
+            return _mapper.Map<UpdateMasterTaskDto>(masterTaskViewModel);
         }
 
         public void Create(CreateMasterTaskDto dto)
@@ -130,8 +134,17 @@ namespace Occumetric.Server.Areas.MasterTasks
 
         public void Update(UpdateMasterTaskDto dto)
         {
-            var tenant = _context.MasterTasks.Find(dto.Id);
-            tenant.Name = dto.Name;
+            var dbMasterTask = _context.MasterTasks.Find(dto.Id);
+            dbMasterTask = _mapper.Map<UpdateMasterTaskDto, MasterTask>(dto, dbMasterTask);
+            dbMasterTask.TaskCategoryMaps.Clear();
+            foreach (var id in dto.TaskCategoryViewModels.Select(x => x.Id).ToList())
+            {
+                dbMasterTask.TaskCategoryMaps.Add(new TaskCategoryMap
+                {
+                    MasterTaskId = dbMasterTask.Id,
+                    TaskCategoryId = id
+                });
+            }
             _context.SaveChanges();
         }
     }

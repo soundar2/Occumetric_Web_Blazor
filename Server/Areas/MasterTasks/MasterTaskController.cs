@@ -47,11 +47,25 @@ namespace Occumetric.Server.Areas.MasterTasks
         }
 
         [HttpGet("{Id:int}")]
-        public async Task<IActionResult> Get([FromRoute] int Id)
+        public async Task<ActionResult<MasterTaskViewModel>> Get([FromRoute] int Id)
         {
             try
             {
                 var result = await Task.Run(() => _masterTaskService.Get(Id));
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("forUpdate/{Id:int}")]
+        public async Task<ActionResult<UpdateMasterTaskDto>> GetForUpdate([FromRoute] int Id)
+        {
+            try
+            {
+                var result = await Task.Run(() => _masterTaskService.GetForUpdate(Id));
                 return Ok(result);
             }
             catch (Exception e)

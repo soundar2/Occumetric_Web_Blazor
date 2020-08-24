@@ -1,14 +1,14 @@
-﻿@page "/masterTasks/create"
+﻿@page "/masterTasks/update/{MasterTaskId:int}"
 @using Occumetric.Shared
 @using Occumetric.Client.Shared
 @inject HttpClient _httpClient
 @inject ICommonHttpService _commonHttpService
 @inject IGlobalsService _globalsService
 @inject NavigationManager _navigationManager
+<h3>Update Master Task</h3>
 
-<h3>Create Master Task</h3>
-
-<EditForm Model="_createMasterTaskDto" OnValidSubmit="OnValidSubmit">
+<EditForm Model="_updateMasterTaskDto" OnValidSubmit="OnValidSubmit">
+    <input type="hidden" value="@_updateMasterTaskDto.Id" />
     <DataAnnotationsValidator />
     <table class="table table-striped">
         <tr>
@@ -16,8 +16,8 @@
                 Name:
             </td>
             <td>
-                <InputText class="form-control required" @bind-Value="_createMasterTaskDto.Name"></InputText>
-                <ValidationMessage For="@(() => _createMasterTaskDto.Name)" />
+                <InputText class="form-control required" @bind-Value="_updateMasterTaskDto.Name"></InputText>
+                <ValidationMessage For="@(() => _updateMasterTaskDto.Name)" />
             </td>
         </tr>
         <tr>
@@ -25,23 +25,23 @@
                 Effort Type:
             </td>
             <td>
-                <InputSelect class="form-control required" @bind-Value="@_createMasterTaskDto.EffortType" @onblur="CalculateNioshIndex">
+                <InputSelect class="form-control required" @bind-Value="@_updateMasterTaskDto.EffortType" @onblur="CalculateNioshIndex">
                     @foreach (var item in _effortTypes)
                     {
                         <option value="@item.Type">@item.Type</option>
                     }
                 </InputSelect>
-                <ValidationMessage For="@(() => _createMasterTaskDto.EffortType)" />
+                <ValidationMessage For="@(() => _updateMasterTaskDto.EffortType)" />
             </td>
         </tr>
-        @if (_createMasterTaskDto.EffortType.Contains("Manual"))
+        @if (_updateMasterTaskDto.EffortType.Contains("Manual"))
         {
             <tr class="animate__animated animate__bounceInLeft ">
                 <td>
                     Description (for Manual Tasks):
                 </td>
                 <td>
-                    <InputText class="form-control required" @bind-Value="_createMasterTaskDto.ShortDescription"></InputText>
+                    <InputText class="form-control required" @bind-Value="_updateMasterTaskDto.ShortDescription"></InputText>
                 </td>
             </tr>
         }
@@ -59,8 +59,8 @@
                 Begin Lift:
             </td>
             <td>
-                <InputText class="form-control" @bind-Value="_fromHeight" @onblur="CalculateNioshIndex"></InputText>
-                <ValidationMessage For="@(() => _createMasterTaskDto.FromHeight)" />
+                <InputText class="form-control" @bind-Value="FromHeight" @onblur="CalculateNioshIndex"></InputText>
+                <ValidationMessage For="@(() => _updateMasterTaskDto.FromHeight)" />
             </td>
         </tr>
         <tr>
@@ -68,11 +68,11 @@
                 End Lift:
             </td>
             <td>
-                <InputText class="form-control" @bind-Value="_toHeight" @onblur="CalculateNioshIndex"></InputText>
-                <ValidationMessage For="@(() => _createMasterTaskDto.ToHeight)" />
+                <InputText class="form-control" @bind-Value="ToHeight" @onblur="CalculateNioshIndex"></InputText>
+                <ValidationMessage For="@(() => _updateMasterTaskDto.ToHeight)" />
             </td>
         </tr>
-        @if (_createMasterTaskDto.EffortType.Contains("Lift") && WtLb > 0)
+        @if (_updateMasterTaskDto.EffortType.Contains("Lift") && WtLb > 0)
         {
             <tr>
                 <td>
@@ -94,37 +94,41 @@
     </table>
 
     <div class="form-group">
-        <label>Assign To Industries:</label>
-        <SelectIndustries SelectedIndustries="_selectedIndustries" OnSelectedIndustriesChanged="SelectedIndustriesChanged"></SelectIndustries>
-    </div>
-    <div class="form-group">
         <label>Assign To Categories:</label>
         <SelectCategories SelectedCategories="_selectedCategories" OnSelectedCategoriesChanged="SelectedCategoriesChanged"></SelectCategories>
     </div>
 
-    <b>@_createdResult</b>
+    <b>@_updatedResult</b>
     <br />
     <b>@_errorMessage</b>
     <button class="btn btn-primary" type="submit">Save Changes</button>
 </EditForm>
 @code {
-    private CreateMasterTaskDto _createMasterTaskDto = new CreateMasterTaskDto();
-    private List<IndustryViewModel> _industries = new List<IndustryViewModel>();
+    [Parameter] public int MasterTaskId { get; set; }
+    public int _masterTaskId { get; set; }
+    private UpdateMasterTaskDto _updateMasterTaskDto = new UpdateMasterTaskDto();
     private List<TaskCategoryViewModel> _selectedCategories = new List<TaskCategoryViewModel>();
-    private List<IndustryViewModel> _selectedIndustries = new List<IndustryViewModel>();
     private List<EffortTypeViewModel> _effortTypes = new List<EffortTypeViewModel>();
-    private string _createdResult = "";
+    private string _updatedResult = "";
     private string _errorMessage = "error";
 
-    //
+    protected async override void OnInitialized()
+    {
+        base.OnInitialized();
+        _masterTaskId = MasterTaskId;
+
+        _effortTypes = await _globalsService.GetEffortTypes();
+        _updateMasterTaskDto = await _commonHttpService.GetGeneric<UpdateMasterTaskDto>($"api/v1/masterTasks/forUpdate/{MasterTaskId}");
+        _selectedCategories.AddRange(_updateMasterTaskDto.TaskCategoryViewModels);
+        StateHasChanged();
+
+    }
+
     private async void OnValidSubmit()
     {
         try
         {
-            _createMasterTaskDto.WeightLb = WtLb;
-            _createMasterTaskDto.FromHeight = FromHeight;
-            _createMasterTaskDto.ToHeight = ToHeight;
-            var response = await _httpClient.PostAsJsonAsync("api/v1/masterTasks", _createMasterTaskDto);
+            var response = await _httpClient.PutAsJsonAsync("api/v1/masterTasks", _updateMasterTaskDto);
             Console.WriteLine("Success");
             if (response.IsSuccessStatusCode)
             {
@@ -147,74 +151,57 @@
         StateHasChanged();
     }
     //
-    protected async override void OnInitialized()
-    {
-        base.OnInitialized();
-        _industries = await _commonHttpService.GetAllIndustries();
-        _effortTypes = await _globalsService.GetEffortTypes();
-        StateHasChanged();
 
-    }
-    //
     private void SelectedCategoriesChanged(List<TaskCategoryViewModel> items)
     {
-        _createMasterTaskDto.CategoryIds.Clear();
-        _createMasterTaskDto.CategoryIds.AddRange(items.Select(x => x.Id).ToList());
+        _updateMasterTaskDto.TaskCategoryViewModels.Clear();
+        _updateMasterTaskDto.TaskCategoryViewModels.AddRange(items);
+        _selectedCategories = _updateMasterTaskDto.TaskCategoryViewModels;
     }
-    //
-    private void SelectedIndustriesChanged(List<IndustryViewModel> items)
-    {
-        _createMasterTaskDto.IndustryIds.Clear();
-        _createMasterTaskDto.IndustryIds.AddRange(items.Select(x => x.Id).ToList());
-    }
+
     //
 
-    private int _wtLb = 20;
-    private string _fromHeight = "30 inches";
-    private string _toHeight = "40 inches";
     private double _nioshIndex = 0;
     private SnooksViewModel _snooksViewModel = new SnooksViewModel();
     public int WtLb
     {
-        get { return _wtLb; }
+        get { return (int)_updateMasterTaskDto.WeightLb; }
         set
         {
-            _wtLb = value;
-            _createMasterTaskDto.WeightLb = _wtLb;
+            _updateMasterTaskDto.WeightLb = value;
             CalculateNioshIndex();
         }
 
     }
     public string FromHeight
     {
-        get { return _fromHeight; }
+        get { return _updateMasterTaskDto.FromHeight; }
         set
         {
-            _fromHeight = value;
-            _createMasterTaskDto.FromHeight = _fromHeight;
+            _updateMasterTaskDto.FromHeight = value;
             CalculateNioshIndex();
         }
 
     }
     public string ToHeight
     {
-        get { return _toHeight; }
+        get { return _updateMasterTaskDto.ToHeight; }
         set
         {
-            _toHeight = value;
-            _createMasterTaskDto.ToHeight = _toHeight;
+            _updateMasterTaskDto.ToHeight = value;
             CalculateNioshIndex();
         }
 
     }
     private async void CalculateNioshIndex()
     {
+        if (!IsValidForNiosh()) return;
         var nioshDto = new NioshCalculateDto
         {
-            EffortType = _createMasterTaskDto.EffortType,
-            WeightLb = _wtLb,
-            FromHeight = Utility.SanitizeStringToInteger(_fromHeight),
-            ToHeight = Utility.SanitizeStringToInteger(_toHeight)
+            EffortType = _updateMasterTaskDto.EffortType,
+            WeightLb = (int)_updateMasterTaskDto.WeightLb,
+            FromHeight = Utility.SanitizeStringToInteger(_updateMasterTaskDto.FromHeight),
+            ToHeight = Utility.SanitizeStringToInteger(_updateMasterTaskDto.ToHeight)
         };
         _nioshIndex = await _commonHttpService.GetNioshIndex(nioshDto);
         //
@@ -225,22 +212,20 @@
     }
     private async Task CalculateSnooks()
     {
+        if (!IsValidForNiosh()) return;
         var snooksDto = new SnooksCalculateDto
         {
-            EffortType = _createMasterTaskDto.EffortType,
-            WeightLb = _wtLb,
-            FromHeight = Utility.SanitizeStringToInteger(_fromHeight),
-            ToHeight = Utility.SanitizeStringToInteger(_toHeight)
+            EffortType = _updateMasterTaskDto.EffortType,
+            WeightLb = (int)_updateMasterTaskDto.WeightLb,
+            FromHeight = Utility.SanitizeStringToInteger(_updateMasterTaskDto.FromHeight),
+            ToHeight = Utility.SanitizeStringToInteger(_updateMasterTaskDto.ToHeight)
         };
         _snooksViewModel = await _commonHttpService.GetSnooksValues(snooksDto);
     }
-    private string SnooksBarWidthRem(int value)
+
+    private bool IsValidForNiosh()
     {
-        //
-        //assume 100% is 5 rem
-        //
-        double d = (double)value / 20.0;
-        return d.ToString("0.0") + "rem";
+        return (_updateMasterTaskDto.EffortType.Contains("Lift") && (int)_updateMasterTaskDto.WeightLb > 0);
     }
 }
 

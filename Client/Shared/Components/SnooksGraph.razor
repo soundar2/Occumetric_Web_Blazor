@@ -1,0 +1,28 @@
+﻿@using Occumetric.Shared
+@if (!string.IsNullOrEmpty(SnooksViewModel.StrMalePercentage))
+{
+    <div class="snooks">
+        <div class="sex">Male</div>
+        <div class="bar">
+            <div class="male" style="width: @SnooksBarWidthRem(SnooksViewModel.IntMalePercentage)"> </div>
+        </div>
+        <div class="value">@SnooksViewModel.StrMalePercentage</div>
+        <div class="sex">Female</div>
+        <div class="bar">
+            <div class="female" style="width: @SnooksBarWidthRem(SnooksViewModel.IntFemalePercentage)"> </div>
+        </div>
+        <div class="value">@SnooksViewModel.StrFemalePercentage</div>
+    </div>
+}
+@code {
+    [Parameter] public SnooksViewModel SnooksViewModel { get; set; } = new Occumetric.Shared.SnooksViewModel();
+
+    private string SnooksBarWidthRem(int value)
+    {
+        //
+        //assume 100% is 5 rem
+        //
+        double d = (double)value / 20.0;
+        return d.ToString("0.0") + "rem";
+    }
+}

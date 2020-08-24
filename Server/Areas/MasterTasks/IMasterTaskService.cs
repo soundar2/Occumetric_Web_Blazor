@@ -9,10 +9,12 @@ namespace Occumetric.Server.Areas.MasterTasks
 
         //List<MasterTaskViewModel> GetMasterTaskForCategory(int industryId, int CategoryId);
 
-        public MasterTaskViewModel Get(int id);
+        MasterTaskViewModel Get(int id);
 
-        public void Create(CreateMasterTaskDto dto);
+        void Create(CreateMasterTaskDto dto);
 
-        public void Update(UpdateMasterTaskDto dto);
+        void Update(UpdateMasterTaskDto dto);
+
+        UpdateMasterTaskDto GetForUpdate(int id);
     }
 }
