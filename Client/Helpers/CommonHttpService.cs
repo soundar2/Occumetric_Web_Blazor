@@ -71,10 +71,46 @@ namespace Occumetric.Client.Helpers
             return viewModel;
         }
 
+        #region GenericGetAndPost
+
         public async Task<T> GetGeneric<T>(string url) where T : class
         {
             var result = await _httpClient.GetFromJsonAsync<T>(url);
             return result;
         }
+
+        public async Task<TOutput> PostGeneric<TInput, TOutput>(string url, TInput input)
+            where TInput : class
+            where TOutput : class
+        {
+            var response = await _httpClient.PostAsJsonAsync<TInput>(url, input);
+            if (response.IsSuccessStatusCode)
+            {
+                var result = response.Content.ReadFromJsonAsync<TOutput>().Result;
+                return result;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public async Task<(bool result, string message)> PostGeneric<TInput>(string url, TInput input)
+                 where TInput : class
+        {
+            var response = await _httpClient.PostAsJsonAsync<TInput>(url, input);
+            if (response.IsSuccessStatusCode)
+            {
+                var result = response.Content.ReadFromJsonAsync<StringResult>().Result;
+                return (true, result.Result);
+            }
+            else
+            {
+                var errResult = response.Content.ReadFromJsonAsync<ErrorResult>().Result;
+                return (false, errResult.Result);
+            }
+        }
+
+        #endregion GenericGetAndPost
     }
 }

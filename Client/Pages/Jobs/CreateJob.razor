@@ -1,0 +1,82 @@
+﻿@page "/jobs/create/tenant/{TenantId:int}"
+@using Occumetric.Shared
+@inject HttpClient _httpClient
+@inject ICommonHttpService _commonHttpService
+<h3>Create Job</h3>
+
+<EditForm Model="_createJobDto" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <p>@message</p>
+    <table class="table table-striped">
+        <tr>
+            <td>
+                Name:
+            </td>
+            <td>
+                <InputText @bind-Value="_createJobDto.Name"></InputText>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Description:
+            </td>
+            <td>
+                <InputText @bind-Value="_createJobDto.Description"></InputText>
+            </td>
+        </tr>
+    </table>
+    <SelectMasterTasks OnSelectedMasterTasksChanged="OnSelectedMasterTasksChanged"></SelectMasterTasks>
+    <table>
+        <tr>
+            <td>
+                <input type="submit" value="Submit" class="btn btn-primary" />
+            </td>
+        </tr>
+    </table>
+</EditForm>
+
+@code {
+    [Parameter] public int TenantId { get; set; }
+    private string message = "This is a message";
+    private CreateJobDto _createJobDto { get; set; } = new CreateJobDto();
+
+    protected override void OnInitialized()
+    {
+        System.Threading.Thread.Sleep(10000);
+        base.OnInitialized();
+
+    }
+
+    private void OnSelectedMasterTasksChanged(List<MasterTaskViewModel> vmList)
+    {
+        _createJobDto.MasterTaskIds.Clear();
+        _createJobDto.MasterTaskIds.AddRange((from item in vmList select item.Id).ToList());
+    }
+
+    private async void OnValidSubmit()
+    {
+        Console.WriteLine("valid submit");
+        try
+        {
+            _createJobDto.TenantId = this.TenantId;
+
+            var result = await _commonHttpService.PostGeneric<CreateJobDto>("api/v1/jobs", _createJobDto);
+            if (result.result == true)
+            {
+                message = "Success:" + result.message;
+            }
+            else
+            {
+
+                message = "Error:" + result.message;
+            }
+
+        }
+        catch (Exception e)
+        {
+            message = e.Message;
+        }
+        StateHasChanged();
+    }
+
+}

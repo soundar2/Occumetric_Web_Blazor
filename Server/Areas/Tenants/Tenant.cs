@@ -1,5 +1,7 @@
 ﻿using Occumetric.Server.Areas.Industries;
+using Occumetric.Server.Areas.Jobs;
 using Occumetric.Server.Models;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Occumetric.Server.Areas.Tenants
@@ -19,5 +21,13 @@ namespace Occumetric.Server.Areas.Tenants
 
         [ForeignKey("IndustryId")]
         public virtual Industry Industry { get; set; }
+
+        private List<Job> _jobs;
+
+        public virtual List<Job> Jobs
+        {
+            get => _jobs ?? (_jobs = new List<Job>());
+            set => _jobs = value;
+        }
     }
 }

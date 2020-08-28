@@ -23,7 +23,7 @@ namespace Occumetric.Server.Areas.TaskCategories
         public virtual List<TaskCategoryMap> TaskCategoryMaps
         {
             get => _taskCategoryMaps ?? (_taskCategoryMaps = new List<TaskCategoryMap>());
-            protected set => _taskCategoryMaps = value;
+            set => _taskCategoryMaps = value;
         }
 
         #endregion Navigation

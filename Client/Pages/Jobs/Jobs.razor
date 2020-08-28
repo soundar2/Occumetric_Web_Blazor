@@ -1,0 +1,93 @@
+﻿@page "/jobs/tenant/{TenantId:int}"
+@using Occumetric.Shared
+@inject HttpClient _httpClient
+<h3>Jobs</h3>
+<a href="@($"/jobs/create/tenant/{TenantId}")" class="btn btn-primary">Create Job</a>
+@if (_jobViewModels.Any())
+{
+    <table class="table">
+        <tr>
+            <td style="background-color: lightgoldenrodyellow">
+                <table class="table table-striped" style="background-color: mediumslateblue">
+                    <thead>
+                        <tr>
+                            <th>
+                                Id
+                            </th>
+                            <th>
+                                Name
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in _jobViewModels)
+                        {
+                            <tr>
+                                <td>
+                                    @item.Id
+                                </td>
+                                <td>
+                                    <label @onclick="@(()=>JobClicked(item.Id))">@item.Name</label>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </td>
+            <td>
+                &nbsp;
+            </td>
+            <td style="background-color: beige">
+                <table class="table table-striped">
+                    @foreach (JobTaskViewModel tvm in _currentTasks)
+                    {
+                        <tr>
+                            <td>
+                                @tvm.Name
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </td>
+        </tr>
+    </table>
+
+}
+
+<p>Tenant: @TenantId</p>
+@code {
+    [Parameter] public int TenantId { get; set; }
+    private List<JobViewModel> _jobViewModels { get; set; } = new List<JobViewModel>();
+    private int _selectedJobId = 0;
+    private List<JobTaskViewModel> _currentTasks = new List<JobTaskViewModel>();
+    protected async override void OnInitialized()
+    {
+        base.OnInitialized();
+        _jobViewModels = new List<JobViewModel>();
+        await FetchData();
+
+    }
+    private async Task FetchData()
+    {
+        try
+        {
+
+            _jobViewModels = await _httpClient.GetFromJsonAsync<List<JobViewModel>>($"api/v1/jobs/tenant/{TenantId}");
+            if (_jobViewModels.Any())
+            {
+                _selectedJobId = _jobViewModels.First().Id;
+            }
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Exception");
+            Console.WriteLine(e.Message);
+        }
+    }
+    private void JobClicked(int jobId)
+    {
+        _selectedJobId = jobId;
+        _currentTasks = (from jvm in _jobViewModels where jvm.Id == jobId select jvm).Single().JobTaskViewModels.ToList();
+    }
+}

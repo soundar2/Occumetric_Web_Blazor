@@ -126,6 +126,7 @@
 
     private async void OnValidSubmit()
     {
+
         try
         {
             var response = await _httpClient.PutAsJsonAsync("api/v1/masterTasks", _updateMasterTaskDto);

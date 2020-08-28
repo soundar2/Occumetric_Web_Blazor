@@ -52,7 +52,7 @@ namespace Occumetric.Server.Areas.MasterTasks
         public virtual List<TaskCategoryMap> TaskCategoryMaps
         {
             get => _taskCategoryMaps ?? (_taskCategoryMaps = new List<TaskCategoryMap>());
-            protected set => _taskCategoryMaps = value;
+            set => _taskCategoryMaps = value;
         }
 
         #endregion Navigation

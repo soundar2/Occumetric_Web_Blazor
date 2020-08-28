@@ -1,0 +1,139 @@
+﻿@*@page "/selectTasks"*@
+@using Occumetric.Shared
+@inject ICommonHttpService _commonHttpService
+<table>
+    <tr>
+        <td>
+            Select Category:
+        </td>
+        <td>
+            <EditForm Model="_selectedCategoryId">
+                <InputSelect class="form-control required"
+                             ValueExpression="@(()=>_selectedCategoryId)"
+                             TValue="string" ValueChanged="@((string value) => SelectedCategoryChanged(value ))">
+                    <option value="0">--All Categories--</option>
+                    @foreach (var item in _taskCategories)
+                    {
+                        <option value="@item.Id.ToString()">@item.Name</option>
+                    }
+                </InputSelect>
+            </EditForm>
+            @*<select @bind="_selectedCategoryId" @onblur="SelectedCategoryChanged">
+                </select>*@
+        </td>
+    </tr>
+</table>
+<table>
+    <tr>
+        <td>
+            @if (_leftList.Count > 0)
+            {
+                <div class="left-list">
+                    @foreach (var item in _leftList)
+                    {
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" @bind="item.IsChecked" />
+                            </label>
+                            @item.Name
+                        </div>
+                    }
+                </div>
+            }
+        </td>
+        <td>
+            <button @onclick="MoveRightClicked" @onclick:preventDefault="true">Move Right</button>
+        </td>
+        <td>
+            <table>
+
+                @foreach (var item in _rightList)
+                {
+                    <tr class="animate__animated animate__bounceInLeft">
+                        <td>
+                            <div class="checkbox ">
+                                <label>
+                                    <input type="checkbox" @bind="item.IsChecked" />
+                                </label>
+                                @item.Name
+                            </div>
+                        </td>
+                    </tr>
+
+                }
+            </table>
+        </td>
+        <td>
+            <button @onclick="DeleteRightClicked" @onclick:preventDefault="true">Delete</button>
+        </td>
+    </tr>
+</table>
+
+@code {
+    [Parameter] public int IndustryId { get; set; }
+    [Parameter]
+    public List<MasterTaskViewModel> SelectedMasterTasks { get; set; } = new List<MasterTaskViewModel>(); //input
+    [Parameter] public EventCallback<List<MasterTaskViewModel>> OnSelectedMasterTasksChanged { get; set; }
+    private List<TaskCategoryViewModel> _taskCategories { get; set; } = new List<TaskCategoryViewModel>();
+    private List<MasterTaskViewModel> _leftList = new List<MasterTaskViewModel>();
+    private List<MasterTaskViewModel> _rightList = new List<MasterTaskViewModel>();
+    private string _selectedCategoryId = "0";
+    //
+
+    protected override async void OnInitialized()
+    {
+        base.OnInitialized();
+        _taskCategories = await _commonHttpService.GetTaskCategories();
+        _leftList = await _commonHttpService.GetMasterTasksForCategory(39, Convert.ToInt32(_selectedCategoryId));
+        foreach (var item in _leftList)
+        {
+            if (SelectedMasterTasks.Any(x => x.Id == item.Id))
+            {
+                item.IsChecked = true;
+            };
+        }
+        await MoveRightClicked();
+        StateHasChanged();
+
+    }
+    protected async Task MoveRightClicked()
+    {
+        var leftIds = (from item in _leftList where item.IsChecked select item.Id).ToList();
+        var rightIds = (from item in _rightList select item.Id).ToList();
+        var idsToMove = leftIds.Except(rightIds);
+        foreach (var id in idsToMove)
+        {
+            var item = (MasterTaskViewModel)_leftList.Where(x => x.Id == id).Select(x => x).Single().Clone();
+            item.IsChecked = false;
+            _rightList.Add(item);
+        }
+        _rightList = (from item in _rightList orderby item.Name select item).ToList();
+        await SetSelectedMasterTasks();
+    }
+    protected async Task DeleteRightClicked()
+    {
+        _rightList.RemoveAll(x => x.IsChecked);
+        await SetSelectedMasterTasks();
+    }
+    private async Task SetSelectedMasterTasks()
+    {
+        await OnSelectedMasterTasksChanged.InvokeAsync(_rightList);
+    }
+
+    private async Task SelectedCategoryChanged(string value)
+    {
+        _selectedCategoryId = value;
+        _leftList = await _commonHttpService.GetMasterTasksForCategory(39, Convert.ToInt32(value));
+        StateHasChanged();
+    }
+}
+
+<style>
+    div.left-list, div.right-list {
+        padding: .5rem;
+        border: 1px solid gray;
+        max-height: 20rem;
+        height: 20rem !important;
+        overflow: scroll;
+    }
+</style>

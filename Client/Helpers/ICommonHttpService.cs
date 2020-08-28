@@ -21,5 +21,10 @@ namespace Occumetric.Client.Helpers
         Task<SnooksViewModel> GetSnooksValues(SnooksCalculateDto dto);
 
         Task<T> GetGeneric<T>(string url) where T : class;
+
+        Task<TOutput> PostGeneric<TInput, TOutput>(string url, TInput input) where TInput : class where TOutput : class;
+
+        Task<(bool result, string message)> PostGeneric<TInput>(string url, TInput input)
+                 where TInput : class;
     }
 }

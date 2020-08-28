@@ -1,6 +1,5 @@
 ﻿using Occumetric.Server.Areas.MasterTasks;
 using Occumetric.Server.Areas.Shared;
-using Occumetric.Server.Areas.TaskCategories;
 using Occumetric.Server.Areas.Tenants;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -24,7 +23,7 @@ namespace Occumetric.Server.Areas.Industries
         public virtual List<MasterTask> MasterTasks
         {
             get => _masterTasks ?? (_masterTasks = new List<MasterTask>());
-            protected set => _masterTasks = value;
+            set => _masterTasks = value;
         }
 
         //------------------------------------------------
@@ -34,7 +33,7 @@ namespace Occumetric.Server.Areas.Industries
         public virtual List<Tenant> Tenants
         {
             get => _tenants ?? (_tenants = new List<Tenant>());
-            protected set => _tenants = value;
+            set => _tenants = value;
         }
 
         //------------------------------------------------

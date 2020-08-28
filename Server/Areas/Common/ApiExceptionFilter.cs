@@ -20,6 +20,7 @@ namespace Occumetric.Server.Areas.Common
                 { typeof(ValidationException), HandleValidationException },
                 { typeof(NotFoundException), HandleNotFoundException },
                 { typeof(DbUpdateException), HandleMySqlException },
+                { typeof(OccumetricException), HandleOccumetricException },
             };
         }
 
@@ -96,6 +97,18 @@ namespace Occumetric.Server.Areas.Common
             context.Result = new BadRequestObjectResult(new ErrorResult
             {
                 Result = exception.InnerException.Message
+            }); ;
+
+            context.ExceptionHandled = true;
+        }
+
+        private void HandleOccumetricException(ExceptionContext context)
+        {
+            var exception = context.Exception as OccumetricException;
+
+            context.Result = new BadRequestObjectResult(new ErrorResult
+            {
+                Result = exception.Message
             }); ;
 
             context.ExceptionHandled = true;

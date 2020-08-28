@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Occumetric.Server.Areas.Helpers;
 using Occumetric.Server.Areas.Industries;
+using Occumetric.Server.Areas.Jobs;
 using Occumetric.Server.Areas.MasterTasks;
 using Occumetric.Server.Areas.Shared;
 using Occumetric.Server.Areas.TaskCategories;
@@ -44,6 +45,8 @@ namespace Occumetric.Server.Data
 
         public DbSet<SnooksCriteria> SnooksCriteria { get; set; }
         public DbSet<SnooksPercentage> SnooksPercentages { get; set; }
+        public DbSet<Job> Jobs { get; set; }
+        public DbSet<JobTask> JobTasks { get; set; }
 
         /// <summary>
         /// </summary>
