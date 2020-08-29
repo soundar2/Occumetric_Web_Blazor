@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Occumetric.Server.Areas.Common;
+using Occumetric.Server.Areas.Helpers;
 using Occumetric.Server.Areas.MasterTasks;
 using Occumetric.Server.Areas.Shared;
 using Occumetric.Server.Data;
@@ -12,11 +13,14 @@ namespace Occumetric.Server.Areas.Jobs
 {
     public class JobService : OccumetricServiceBase, IJobService
     {
-        public JobService(ApplicationDbContext context, IMapper mapper) : base(context, mapper)
+        private IHelperService _helperService { get; set; }
+
+        public JobService(ApplicationDbContext context, IMapper mapper, IHelperService helperService) : base(context, mapper)
         {
+            _helperService = helperService;
         }
 
-        public List<JobViewModel> GetJobs(int tenantId)
+        public List<JobViewModel> Index(int tenantId)
         {
             List<Job> dbJobs = _context.Jobs
                 .Include(j => j.JobTasks)
@@ -34,7 +38,7 @@ namespace Occumetric.Server.Areas.Jobs
             return jvms;
         }
 
-        public JobViewModel Details(int jobId)
+        public JobViewModel ViewGet(int jobId)
         {
             Job dbJob = _context.Jobs
                 .Include(j => j.JobTasks)
@@ -62,16 +66,79 @@ namespace Occumetric.Server.Areas.Jobs
             {
                 MasterTask mt = _context.MasterTasks
                                 .Find(id);
+
+                //
+                //snooks and niosh are already calculated
+                //and stored in mastertask
+                //no need to recalculate  here
+                //
                 JobTask jobTask = _mapper.Map<JobTask>(mt);
                 jobTask.Id = 0;
                 taskList.Add(jobTask);
-
-                //job.JobTasks.Add(jobTask);
             }
             job.JobTasks = taskList;
             _context.Jobs.Add(job);
             _context.SaveChanges();
             return job.Id;
+        }
+
+        public bool Update(UpdateJobDto updateJobDto)
+        {
+            var dbJob = _context.Jobs.Find(updateJobDto.Id);
+            dbJob = _mapper.Map<UpdateJobDto, Job>(updateJobDto, dbJob);
+            _context.SaveChanges();
+            return true;
+        }
+
+        public bool AddNewTasksToJob(int jobId, List<int> MasterTaskIds)
+        {
+            var dbJob = _context.Jobs.Find(jobId);
+            foreach (int id in MasterTaskIds)
+            {
+                MasterTask mt = _context.MasterTasks
+                                .Find(id);
+
+                //
+                //snooks and niosh are already calculated
+                //and stored in mastertask
+                //no need to recalculate  here
+                //
+                JobTask jobTask = _mapper.Map<JobTask>(mt);
+                dbJob.JobTasks.Add(jobTask);
+            }
+            _context.SaveChanges();
+            return true;
+        }
+
+        public TenantSummary GetJobCountsByTenant()
+        {
+            var result = new List<JobCountViewModel>();
+            var tenants = _context.Tenants
+                            .Include(t => t.Jobs)
+                            .ThenInclude(j => j.JobTasks)
+                            .Select(t => t).ToList();
+
+            foreach (var tenant in tenants)
+            {
+                var vm = new JobCountViewModel
+                {
+                    TenantId = tenant.Id,
+                    JobCount = tenant.Jobs.Count
+                };
+                foreach (var job in tenant.Jobs)
+                {
+                    vm.TaskCountViewModels.Add(new TaskCountViewModel
+                    {
+                        JobId = job.Id,
+                        TaskCount = job.JobTasks.Count
+                    });
+                }
+                result.Add(vm);
+            };
+            return new TenantSummary
+            {
+                JobStats = result
+            };
         }
     }
 }

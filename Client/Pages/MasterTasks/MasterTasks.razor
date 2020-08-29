@@ -30,6 +30,7 @@
                     Description (for Manual Tasks)
                 </th>
                 <th>Weight to Lift (lb.)</th>
+                <th>Begin/End Lifts</th>
                 <th>
                     Niosh Index
                 </th>
@@ -64,7 +65,16 @@
                         @item.WeightLb
                     </td>
                     <td>
-                        <NioshBadge NioshValue="@item.LiftingIndex"></NioshBadge>
+                        @if (item.EffortType.Contains("Lift"))
+                        {
+                            <span>@item.FromHeight / @item.ToHeight</span>
+                        }
+                    </td>
+                    <td>
+                        @if (item.EffortType.Contains("Lift"))
+                        {
+                            <NioshBadge NioshValue="@item.LiftingIndex"></NioshBadge>
+                        }
                     </td>
                     @if (_showCategories)
                     {
@@ -91,14 +101,13 @@ else
 @code {
     [Parameter] public int IndustryId { get; set; }
     private int _rowNo = 0;
-    private List<MasterTaskViewModel> _masterTaskViewModels { get; set; }
+    private List<MasterTaskViewModel> _masterTaskViewModels { get; set; } = new List<MasterTaskViewModel>();
     private string _errorMessage = "";
     private bool _isLoading = true;
     private bool _showCategories = false;
     protected async override void OnInitialized()
     {
         base.OnInitialized();
-        _masterTaskViewModels = new List<MasterTaskViewModel>();
         await FetchData();
 
     }

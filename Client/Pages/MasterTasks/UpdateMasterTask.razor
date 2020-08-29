@@ -54,27 +54,28 @@
                 @*<InputNumber class="form-control required" @bind-Value="_weightLb"></InputNumber>*@
             </td>
         </tr>
-        <tr>
-            <td>
-                Begin Lift:
-            </td>
-            <td>
-                <InputText class="form-control" @bind-Value="FromHeight" @onblur="CalculateNioshIndex"></InputText>
-                <ValidationMessage For="@(() => _updateMasterTaskDto.FromHeight)" />
-            </td>
-        </tr>
-        <tr>
-            <td>
-                End Lift:
-            </td>
-            <td>
-                <InputText class="form-control" @bind-Value="ToHeight" @onblur="CalculateNioshIndex"></InputText>
-                <ValidationMessage For="@(() => _updateMasterTaskDto.ToHeight)" />
-            </td>
-        </tr>
         @if (_updateMasterTaskDto.EffortType.Contains("Lift") && WtLb > 0)
         {
-            <tr>
+            <tr class="animate__animated animate__bounceInLeft ">
+                <td>
+                    Begin Lift:
+                </td>
+                <td>
+                    <InputText class="form-control" @bind-Value="FromHeight" @onblur="CalculateNioshIndex"></InputText>
+                    <ValidationMessage For="@(() => _updateMasterTaskDto.FromHeight)" />
+                </td>
+            </tr>
+            <tr class="animate__animated animate__bounceInLeft ">
+                <td>
+                    End Lift:
+                </td>
+                <td>
+                    <InputText class="form-control" @bind-Value="ToHeight" @onblur="CalculateNioshIndex"></InputText>
+                    <ValidationMessage For="@(() => _updateMasterTaskDto.ToHeight)" />
+                </td>
+            </tr>
+
+            <tr class="animate__animated animate__bounceInLeft ">
                 <td>
                     Niosh Index:
                 </td>
@@ -82,7 +83,7 @@
                     <NioshBadge NioshValue="_nioshIndex"></NioshBadge>
                 </td>
             </tr>
-            <tr>
+            <tr class="animate__animated animate__bounceInLeft ">
                 <td>
                     Snooks:
                 </td>
@@ -101,11 +102,10 @@
     <b>@_updatedResult</b>
     <br />
     <b>@_errorMessage</b>
-    <button class="btn btn-primary" type="submit">Save Changes</button>
+    <button class="btn btn-primary" type="submit" disabled="@IsDisabled">Save Changes</button>
 </EditForm>
 @code {
     [Parameter] public int MasterTaskId { get; set; }
-    public int _masterTaskId { get; set; }
     private UpdateMasterTaskDto _updateMasterTaskDto = new UpdateMasterTaskDto();
     private List<TaskCategoryViewModel> _selectedCategories = new List<TaskCategoryViewModel>();
     private List<EffortTypeViewModel> _effortTypes = new List<EffortTypeViewModel>();
@@ -115,10 +115,9 @@
     protected async override void OnInitialized()
     {
         base.OnInitialized();
-        _masterTaskId = MasterTaskId;
 
         _effortTypes = await _globalsService.GetEffortTypes();
-        _updateMasterTaskDto = await _commonHttpService.GetGeneric<UpdateMasterTaskDto>($"api/v1/masterTasks/forUpdate/{MasterTaskId}");
+        _updateMasterTaskDto = await _commonHttpService.GetGeneric<UpdateMasterTaskDto>($"/masterTasks/updateGet/{MasterTaskId}");
         _selectedCategories.AddRange(_updateMasterTaskDto.TaskCategoryViewModels);
         StateHasChanged();
 
@@ -129,7 +128,7 @@
 
         try
         {
-            var response = await _httpClient.PutAsJsonAsync("api/v1/masterTasks", _updateMasterTaskDto);
+            var response = await _httpClient.PutAsJsonAsync(CommonHttpService.BaseUrl + "/masterTasks", _updateMasterTaskDto);
             Console.WriteLine("Success");
             if (response.IsSuccessStatusCode)
             {
@@ -228,6 +227,8 @@
     {
         return (_updateMasterTaskDto.EffortType.Contains("Lift") && (int)_updateMasterTaskDto.WeightLb > 0);
     }
+
+    private bool IsDisabled => !(_selectedCategories.Any());
 }
 
 <style>

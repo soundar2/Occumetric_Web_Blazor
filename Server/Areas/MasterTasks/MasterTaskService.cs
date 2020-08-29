@@ -17,7 +17,7 @@ namespace Occumetric.Server.Areas.MasterTasks
             _helperService = helperService;
         }
 
-        public List<MasterTaskViewModel> GetMasterTasks(int IndustryId, int CategoryId = 0)
+        public List<MasterTaskViewModel> Index(int IndustryId, int CategoryId = 0)
         {
             List<MasterTask> dbMasterTasks;
 
@@ -56,7 +56,7 @@ namespace Occumetric.Server.Areas.MasterTasks
             return mtViewModels;
         }
 
-        public MasterTaskViewModel Get(int id)
+        public MasterTaskViewModel ViewGet(int id)
         {
             var dbMasterTask = _context.MasterTasks.Find(id);
             var dbTcList = (from map in _context.TaskCategoryMaps
@@ -70,9 +70,9 @@ namespace Occumetric.Server.Areas.MasterTasks
             return mtViewModel;
         }
 
-        public UpdateMasterTaskDto GetForUpdate(int id)
+        public UpdateMasterTaskDto UpdateGet(int id)
         {
-            var masterTaskViewModel = this.Get(id);
+            var masterTaskViewModel = this.ViewGet(id);
             return _mapper.Map<UpdateMasterTaskDto>(masterTaskViewModel);
         }
 
@@ -88,14 +88,14 @@ namespace Occumetric.Server.Areas.MasterTasks
 
             var mt = _mapper.Map<MasterTask>(dto);
 
-            var intFromHeight = Utility.SanitizeStringToInteger(dto.FromHeight);
-            var intToHeight = Utility.SanitizeStringToInteger(dto.ToHeight);
+            mt.IntFromHeight = Utility.SanitizeStringToInteger(dto.FromHeight);
+            mt.IntToHeight = Utility.SanitizeStringToInteger(dto.ToHeight);
 
             var snooksValues = _helperService.CalculateSnooks(new SnooksCalculateDto
             {
                 EffortType = mt.EffortType,
-                FromHeight = intFromHeight,
-                ToHeight = intToHeight,
+                FromHeight = mt.IntFromHeight,
+                ToHeight = mt.IntToHeight,
                 WeightLb = (int)dto.WeightLb
             });
 
@@ -105,8 +105,8 @@ namespace Occumetric.Server.Areas.MasterTasks
             var nioshIndex = _helperService.GetNioshIndex(new NioshCalculateDto
             {
                 EffortType = dto.EffortType,
-                FromHeight = intFromHeight,
-                ToHeight = intToHeight,
+                FromHeight = mt.IntFromHeight,
+                ToHeight = mt.IntToHeight,
                 WeightLb = (int)dto.WeightLb
             });
 
@@ -134,8 +134,30 @@ namespace Occumetric.Server.Areas.MasterTasks
 
         public void Update(UpdateMasterTaskDto dto)
         {
+            var IntFromHeight = Utility.SanitizeStringToInteger(dto.FromHeight);
+            var IntToHeight = Utility.SanitizeStringToInteger(dto.ToHeight);
+
+            var snooksValues = _helperService.CalculateSnooks(new SnooksCalculateDto
+            {
+                EffortType = dto.EffortType,
+                FromHeight = IntFromHeight,
+                ToHeight = IntToHeight,
+                WeightLb = (int)dto.WeightLb
+            });
+
+            var nioshIndex = _helperService.GetNioshIndex(new NioshCalculateDto
+            {
+                EffortType = dto.EffortType,
+                FromHeight = IntFromHeight,
+                ToHeight = IntToHeight,
+                WeightLb = (int)dto.WeightLb
+            });
+
             var dbMasterTask = _context.MasterTasks.Find(dto.Id);
             dbMasterTask = _mapper.Map<UpdateMasterTaskDto, MasterTask>(dto, dbMasterTask);
+            dbMasterTask.LiftingIndex = nioshIndex;
+            dbMasterTask.SnooksMale = snooksValues.StrMalePercentage;
+            dbMasterTask.SnooksFemale = snooksValues.StrFemalePercentage;
             dbMasterTask.TaskCategoryMaps.Clear();
             foreach (var id in dto.TaskCategoryViewModels.Select(x => x.Id).ToList())
             {

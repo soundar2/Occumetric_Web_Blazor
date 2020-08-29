@@ -7,15 +7,18 @@
 {
     <table class="table">
         <tr>
-            <td style="background-color: lightgoldenrodyellow">
-                <table class="table table-striped" style="background-color: mediumslateblue">
+            <td>
+                <table class="table table-striped">
                     <thead>
                         <tr>
                             <th>
-                                Id
+                                Job Id
                             </th>
                             <th>
                                 Name
+                            </th>
+                            <th>
+                                Add New Tasks
                             </th>
                         </tr>
                     </thead>
@@ -27,7 +30,16 @@
                                     @item.Id
                                 </td>
                                 <td>
-                                    <label @onclick="@(()=>JobClicked(item.Id))">@item.Name</label>
+                                    <button type="button"
+                                            @onclick="@(()=>JobClicked(item.Id))"
+                                            class="btn btn-link">
+                                        @item.Name
+                                    </button>
+                                </td>
+
+                                <td>
+
+                                    <a href="/jobs/addTasks/@item.Id">Add New Tasks</a>
                                 </td>
                             </tr>
                         }
@@ -37,7 +49,7 @@
             <td>
                 &nbsp;
             </td>
-            <td style="background-color: beige">
+            <td>
                 <table class="table table-striped">
                     @foreach (JobTaskViewModel tvm in _currentTasks)
                     {
@@ -45,19 +57,25 @@
                             <td>
                                 @tvm.Name
                             </td>
+                            <td>
+                                <a href="/tasks/update/@tvm.Id"
+                                   class="btn btn-link">
+                                    Edit
+                                </a>
+                            </td>
                         </tr>
                     }
                 </table>
             </td>
         </tr>
     </table>
-
 }
 
 <p>Tenant: @TenantId</p>
 @code {
     [Parameter] public int TenantId { get; set; }
     private List<JobViewModel> _jobViewModels { get; set; } = new List<JobViewModel>();
+    private List<JobCountViewModel> _jobCountViewModels { get; set; } = new List<JobCountViewModel>();
     private int _selectedJobId = 0;
     private List<JobTaskViewModel> _currentTasks = new List<JobTaskViewModel>();
     protected async override void OnInitialized()
@@ -72,10 +90,11 @@
         try
         {
 
-            _jobViewModels = await _httpClient.GetFromJsonAsync<List<JobViewModel>>($"api/v1/jobs/tenant/{TenantId}");
+            _jobViewModels = await _httpClient.GetFromJsonAsync<List<JobViewModel>>(CommonHttpService.BaseUrl + $"/jobs/tenant/{TenantId}");
             if (_jobViewModels.Any())
             {
                 _selectedJobId = _jobViewModels.First().Id;
+                JobClicked(_selectedJobId);
             }
             StateHasChanged();
         }
@@ -89,5 +108,14 @@
     {
         _selectedJobId = jobId;
         _currentTasks = (from jvm in _jobViewModels where jvm.Id == jobId select jvm).Single().JobTaskViewModels.ToList();
+    }
+    //
+    private int TaskCount(int jobId)
+    {
+        Console.WriteLine(jobId);
+        return (from jc in _jobCountViewModels
+                from tc in jc.TaskCountViewModels
+                where tc.JobId == jobId
+                select tc.TaskCount).Single();
     }
 }

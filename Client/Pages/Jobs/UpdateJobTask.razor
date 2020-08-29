@@ -1,0 +1,226 @@
+﻿@page "/tasks/update/{TaskId:int}"
+@using Occumetric.Shared
+@inject HttpClient _httpClient
+@inject ICommonHttpService _commonHttpService
+@inject IGlobalsService _globalsService
+<h3>Update Task</h3>
+
+<EditForm Model="_updateJobTaskDto" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <p>@message</p>
+    <table class="table table-striped">
+        <tr>
+            <td>
+                Name:
+            </td>
+            <td>
+                <InputText @bind-Value="_updateJobTaskDto.Name"></InputText>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Effort Type:
+            </td>
+            <td>
+                <InputSelect class="form-control required" @bind-Value="@_updateJobTaskDto.EffortType" @onblur="CalculateNioshIndex">
+                    @foreach (var item in _effortTypes)
+                    {
+                        <option value="@item.Type">@item.Type</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => _updateJobTaskDto.EffortType)" />
+            </td>
+        </tr>
+        @if (_updateJobTaskDto.EffortType.Contains("Manual"))
+        {
+            <tr class="animate__animated animate__bounceInLeft ">
+                <td>
+                    Description (for Manual Tasks):
+                </td>
+                <td>
+                    <InputText class="form-control required" @bind-Value="_updateJobTaskDto.ShortDescription"></InputText>
+                </td>
+            </tr>
+        }
+        <tr>
+            <td>
+                Weight to Lift:
+            </td>
+            <td>
+                <input type="text" @bind-value="WtLb" @onblur="CalculateNioshIndex" />
+                @*<InputNumber class="form-control required" @bind-Value="_weightLb"></InputNumber>*@
+            </td>
+        </tr>
+
+        @if (_updateJobTaskDto.EffortType.Contains("Lift"))
+        {
+
+            <tr class="animate__animated animate__bounceInLeft ">
+                <td>
+                    Begin Lift:
+                </td>
+                <td>
+                    <InputText class="form-control" @bind-Value="FromHeight" @onblur="CalculateNioshIndex"></InputText>
+                    <ValidationMessage For="@(() => _updateJobTaskDto.FromHeight)" />
+                </td>
+            </tr>
+            <tr class="animate__animated animate__bounceInLeft ">
+                <td>
+                    End Lift:
+                </td>
+                <td>
+                    <InputText class="form-control" @bind-Value="ToHeight" @onblur="CalculateNioshIndex"></InputText>
+                    <ValidationMessage For="@(() => _updateJobTaskDto.ToHeight)" />
+                </td>
+            </tr>
+            <tr class="animate__animated animate__bounceInLeft ">
+                <td>
+                    Lift Frequency:
+                </td>
+                <td>
+                    <InputSelect class="form-control required" @bind-Value="@_updateJobTaskDto.LiftFrequencyType" @onblur="CalculateSnooks">
+                        @foreach (var item in _liftFrequencyTypes)
+                            {
+                            <option value="@item.Type">@item.Type</option>
+                            }
+                    </InputSelect>
+                </td>
+            </tr>
+            <tr class="animate__animated animate__bounceInLeft ">
+                <td>
+                    Lift Duration:
+                </td>
+                <td>
+                    <InputSelect class="form-control required" @bind-Value="@_updateJobTaskDto.LiftDurationType" @onblur="CalculateSnooks">
+                        @foreach (var item in _liftDurationTypes)
+                            {
+                            <option value="@item.Type">@item.Type</option>
+                            }
+                    </InputSelect>
+                </td>
+            </tr>
+        }
+    </table>
+
+    <table>
+        <tr>
+            <td>
+                <input type="submit" value="Submit" class="btn btn-primary" />
+            </td>
+        </tr>
+    </table>
+</EditForm>
+
+@code {
+    [Parameter] public int TaskId { get; set; }
+    private List<EffortTypeViewModel> _effortTypes = new List<EffortTypeViewModel>();
+    private List<LiftFrequencyTypeViewModel> _liftFrequencyTypes = new List<LiftFrequencyTypeViewModel>();
+    private List<LiftDurationTypeViewModel> _liftDurationTypes = new List<LiftDurationTypeViewModel>();
+    private string message = "This is a message";
+    private UpdateJobTaskDto _updateJobTaskDto { get; set; } = new UpdateJobTaskDto();
+
+    protected async override void OnInitialized()
+    {
+        base.OnInitialized();
+        await FetchData();
+        StateHasChanged();
+    }
+
+    private async Task FetchData()
+    {
+        _effortTypes = await _globalsService.GetEffortTypes();
+        _liftFrequencyTypes = await _commonHttpService.GetLiftFrequencyTypes();
+        _liftDurationTypes = await _commonHttpService.GetLiftDurationTypes();
+        _updateJobTaskDto = await _httpClient.GetFromJsonAsync<UpdateJobTaskDto>(CommonHttpService.BaseUrl + $"/jobTasks/updateGet/{TaskId}");
+    }
+    private async void OnValidSubmit()
+    {
+        Console.WriteLine("valid submit");
+        try
+        {
+
+            var result = await _commonHttpService.PutGeneric<UpdateJobTaskDto>("/jobs/tasks", _updateJobTaskDto);
+            if (result.result == true)
+            {
+                message = "Success:" + result.message;
+            }
+            else
+            {
+
+                message = "Error:" + result.message;
+            }
+
+        }
+        catch (Exception e)
+        {
+            message = e.Message;
+        }
+        StateHasChanged();
+    }
+    private double _nioshIndex = 0;
+    private SnooksViewModel _snooksViewModel = new SnooksViewModel();
+    public int WtLb
+    {
+        get { return (int)_updateJobTaskDto.WeightLb; }
+        set
+        {
+            _updateJobTaskDto.WeightLb = value;
+            CalculateNioshIndex();
+        }
+
+    }
+    public string FromHeight
+    {
+        get { return _updateJobTaskDto.FromHeight; }
+        set
+        {
+            _updateJobTaskDto.FromHeight = value;
+            CalculateNioshIndex();
+        }
+
+    }
+    public string ToHeight
+    {
+        get { return _updateJobTaskDto.ToHeight; }
+        set
+        {
+            _updateJobTaskDto.ToHeight = value;
+            CalculateNioshIndex();
+        }
+
+    }
+    private async void CalculateNioshIndex()
+    {
+        if (!IsValidForNiosh()) return;
+        var nioshDto = new NioshCalculateDto
+        {
+            EffortType = _updateJobTaskDto.EffortType,
+            WeightLb = (int)_updateJobTaskDto.WeightLb,
+            FromHeight = Utility.SanitizeStringToInteger(_updateJobTaskDto.FromHeight),
+            ToHeight = Utility.SanitizeStringToInteger(_updateJobTaskDto.ToHeight)
+        };
+        _nioshIndex = await _commonHttpService.GetNioshIndex(nioshDto);
+        //
+        //also calculate snooks
+        //
+        await CalculateSnooks();
+        StateHasChanged();
+    }
+    private async Task CalculateSnooks()
+    {
+        if (!IsValidForNiosh()) return;
+        var snooksDto = new SnooksCalculateDto
+        {
+            EffortType = _updateJobTaskDto.EffortType,
+            WeightLb = (int)_updateJobTaskDto.WeightLb,
+            FromHeight = Utility.SanitizeStringToInteger(_updateJobTaskDto.FromHeight),
+            ToHeight = Utility.SanitizeStringToInteger(_updateJobTaskDto.ToHeight)
+        };
+        _snooksViewModel = await _commonHttpService.GetSnooksValues(snooksDto);
+    }
+
+    private bool IsValidForNiosh()
+    {
+        return (_updateJobTaskDto.EffortType.Contains("Lift") && (int)_updateJobTaskDto.WeightLb > 0);
+    }
+}

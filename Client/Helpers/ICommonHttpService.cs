@@ -16,6 +16,10 @@ namespace Occumetric.Client.Helpers
 
         Task<List<EffortTypeViewModel>> GetEffortTypes();
 
+        Task<List<LiftFrequencyTypeViewModel>> GetLiftFrequencyTypes();
+
+        Task<List<LiftDurationTypeViewModel>> GetLiftDurationTypes();
+
         Task<double> GetNioshIndex(NioshCalculateDto dto);
 
         Task<SnooksViewModel> GetSnooksValues(SnooksCalculateDto dto);
@@ -26,5 +30,8 @@ namespace Occumetric.Client.Helpers
 
         Task<(bool result, string message)> PostGeneric<TInput>(string url, TInput input)
                  where TInput : class;
+
+        Task<(bool result, string message)> PutGeneric<TInput>(string url, TInput input)
+           where TInput : class;
     }
 }

@@ -42,7 +42,6 @@
 
     protected override void OnInitialized()
     {
-        System.Threading.Thread.Sleep(10000);
         base.OnInitialized();
 
     }
@@ -60,7 +59,7 @@
         {
             _createJobDto.TenantId = this.TenantId;
 
-            var result = await _commonHttpService.PostGeneric<CreateJobDto>("api/v1/jobs", _createJobDto);
+            var result = await _commonHttpService.PostGeneric<CreateJobDto>("/jobs", _createJobDto);
             if (result.result == true)
             {
                 message = "Success:" + result.message;

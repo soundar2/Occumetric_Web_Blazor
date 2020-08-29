@@ -9,6 +9,7 @@ namespace Occumetric.Client.Helpers
     public class CommonHttpService : ICommonHttpService
     {
         private readonly HttpClient _httpClient;
+        public static readonly string BaseUrl = "/api/v1";
 
         public CommonHttpService(HttpClient client)
         {
@@ -17,56 +18,56 @@ namespace Occumetric.Client.Helpers
 
         public async Task<List<IndustryViewModel>> GetAllIndustries()
         {
-            var result = await _httpClient.GetFromJsonAsync<List<IndustryViewModel>>("api/v1/industries");
+            var result = await _httpClient.GetFromJsonAsync<List<IndustryViewModel>>(BaseUrl + "/industries");
             return result;
         }
 
         public async Task<List<TaskCategoryViewModel>> GetTaskCategories()
         {
-            var result = await _httpClient.GetFromJsonAsync<List<TaskCategoryViewModel>>($"api/v1/taskCategories");
+            var result = await _httpClient.GetFromJsonAsync<List<TaskCategoryViewModel>>(BaseUrl + $"/taskCategories");
             return result;
         }
 
         public async Task<List<MasterTaskViewModel>> GetMasterTasksForIndustry(int industryId)
         {
-            var result = await _httpClient.GetFromJsonAsync<List<MasterTaskViewModel>>($"api/v1/masterTasks/industry/{industryId}");
+            var result = await _httpClient.GetFromJsonAsync<List<MasterTaskViewModel>>(BaseUrl + $"/masterTasks/industry/{industryId}");
             return result;
         }
 
         public async Task<List<MasterTaskViewModel>> GetMasterTasksForCategory(int industryId, int CategoryId)
         {
-            var result = await _httpClient.GetFromJsonAsync<List<MasterTaskViewModel>>($"api/v1/masterTasks/industry/{industryId}/category/{CategoryId}");
+            var result = await _httpClient.GetFromJsonAsync<List<MasterTaskViewModel>>(BaseUrl + $"/masterTasks/industry/{industryId}/category/{CategoryId}");
             return result;
         }
 
         public async Task<List<EffortTypeViewModel>> GetEffortTypes()
         {
-            var result = await _httpClient.GetFromJsonAsync<List<EffortTypeViewModel>>("api/v1/helpers/effortTypes");
+            var result = await _httpClient.GetFromJsonAsync<List<EffortTypeViewModel>>(BaseUrl + "/helpers/effortTypes");
             return result;
         }
 
         public async Task<List<LiftDurationTypeViewModel>> GetLiftDurationTypes()
         {
-            var result = await _httpClient.GetFromJsonAsync<List<LiftDurationTypeViewModel>>("api/v1/helpers/liftDurationTypes");
+            var result = await _httpClient.GetFromJsonAsync<List<LiftDurationTypeViewModel>>(BaseUrl + "/helpers/liftDurationTypes");
             return result;
         }
 
         public async Task<List<LiftFrequencyTypeViewModel>> GetLiftFrequencyTypes()
         {
-            var result = await _httpClient.GetFromJsonAsync<List<LiftFrequencyTypeViewModel>>("api/v1/helpers/liftFrequencyTypes");
+            var result = await _httpClient.GetFromJsonAsync<List<LiftFrequencyTypeViewModel>>(BaseUrl + "/helpers/liftFrequencyTypes");
             return result;
         }
 
         public async Task<double> GetNioshIndex(NioshCalculateDto dto)
         {
-            var response = await _httpClient.PostAsJsonAsync<NioshCalculateDto>("api/v1/helpers/nioshIndex", dto);
+            var response = await _httpClient.PostAsJsonAsync<NioshCalculateDto>(BaseUrl + "/helpers/nioshIndex", dto);
             var nioshIndex = response.Content.ReadFromJsonAsync<double>().Result;
             return nioshIndex;
         }
 
         public async Task<SnooksViewModel> GetSnooksValues(SnooksCalculateDto dto)
         {
-            var response = await _httpClient.PostAsJsonAsync<SnooksCalculateDto>("api/v1/helpers/snooks", dto);
+            var response = await _httpClient.PostAsJsonAsync<SnooksCalculateDto>(BaseUrl + "/helpers/snooks", dto);
             var viewModel = response.Content.ReadFromJsonAsync<SnooksViewModel>().Result;
             return viewModel;
         }
@@ -75,7 +76,7 @@ namespace Occumetric.Client.Helpers
 
         public async Task<T> GetGeneric<T>(string url) where T : class
         {
-            var result = await _httpClient.GetFromJsonAsync<T>(url);
+            var result = await _httpClient.GetFromJsonAsync<T>(BaseUrl + url);
             return result;
         }
 
@@ -83,7 +84,7 @@ namespace Occumetric.Client.Helpers
             where TInput : class
             where TOutput : class
         {
-            var response = await _httpClient.PostAsJsonAsync<TInput>(url, input);
+            var response = await _httpClient.PostAsJsonAsync<TInput>(BaseUrl + url, input);
             if (response.IsSuccessStatusCode)
             {
                 var result = response.Content.ReadFromJsonAsync<TOutput>().Result;
@@ -98,7 +99,23 @@ namespace Occumetric.Client.Helpers
         public async Task<(bool result, string message)> PostGeneric<TInput>(string url, TInput input)
                  where TInput : class
         {
-            var response = await _httpClient.PostAsJsonAsync<TInput>(url, input);
+            var response = await _httpClient.PostAsJsonAsync<TInput>(BaseUrl + url, input);
+            if (response.IsSuccessStatusCode)
+            {
+                var result = response.Content.ReadFromJsonAsync<StringResult>().Result;
+                return (true, result.Result);
+            }
+            else
+            {
+                var errResult = response.Content.ReadFromJsonAsync<ErrorResult>().Result;
+                return (false, errResult.Result);
+            }
+        }
+
+        public async Task<(bool result, string message)> PutGeneric<TInput>(string url, TInput input)
+         where TInput : class
+        {
+            var response = await _httpClient.PutAsJsonAsync<TInput>(BaseUrl + url, input);
             if (response.IsSuccessStatusCode)
             {
                 var result = response.Content.ReadFromJsonAsync<StringResult>().Result;

@@ -1,6 +1,7 @@
 ﻿@page "/tenants/industry/{IndustryId:int}"
 @using Occumetric.Shared
 @inject HttpClient _httpClient
+@inject ICommonHttpService _commonHttpService
 <h3>Tenants</h3>
 
 <p><b>@_errorMessage</b></p>
@@ -12,7 +13,7 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Id</th>
+                <th>Tenant Id</th>
                 <th>Name</th>
                 <th>Jobs</th>
                 <th>Master Tasks</th>
@@ -31,7 +32,7 @@
                         @item.Name
                     </td>
                     <td>
-                        <a href=@($"/jobs/tenant/{item.Id}")>Jobs</a>
+                        <a href=@($"/jobs/tenant/{item.Id}")>Jobs </a>
                     </td>
                     <td>
                         <a href=@($"/masterTasks/industry/{item.Industry.Id}")>Master Tasks</a>
@@ -52,6 +53,7 @@ else
     [Parameter] public int IndustryId { get; set; }
     private List<TenantViewModel> _tenantViewModels { get; set; }
     private string _errorMessage = "";
+    private List<JobCountViewModel> _jobCountViewModels { get; set; } = new List<JobCountViewModel>();
     [CascadingParameter] Globals Globals { get; set; }
 
     protected async override void OnInitialized()
@@ -66,7 +68,7 @@ else
         try
         {
             Globals.IndustryId = IndustryId;
-            _tenantViewModels = await _httpClient.GetFromJsonAsync<List<TenantViewModel>>($"api/v1/tenants/industry/{IndustryId}");
+            _tenantViewModels = await _httpClient.GetFromJsonAsync<List<TenantViewModel>>(CommonHttpService.BaseUrl + $"/tenants/industry/{IndustryId}");
             StateHasChanged();
         }
         catch (Exception e)
@@ -76,5 +78,10 @@ else
             _errorMessage = e.Message;
 
         }
+    }
+
+    private int JobCount(int TenantId)
+    {
+        return (from j in _jobCountViewModels where j.TenantId == TenantId select j.JobCount).Single();
     }
 }

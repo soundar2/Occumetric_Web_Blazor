@@ -37,9 +37,18 @@ namespace Occumetric.Server.Areas.Shared
             //
             //jobs
             //
-            CreateMap<JobTask, JobTaskViewModel>();
             CreateMap<Job, JobViewModel>();
             CreateMap<CreateJobDto, Job>();
+            CreateMap<UpdateJobDto, Job>();
+
+            //
+            //jobtasks
+            //
+            CreateMap<JobTask, JobTaskViewModel>();
+            CreateMap<JobTaskViewModel, SnooksCalculateDto>();
+            CreateMap<JobTaskViewModel, SnooksCalculateDto>();
+            CreateMap<UpdateJobTaskDto, JobTask>();
+            CreateMap<JobTask, UpdateJobTaskDto>(); // for update
         }
     }
 }

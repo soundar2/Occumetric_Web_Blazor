@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Occumetric.Server.Areas.Helpers;
 using Occumetric.Server.Areas.Industries;
 using Occumetric.Server.Areas.Jobs;
+using Occumetric.Server.Areas.JobTasks;
 using Occumetric.Server.Areas.MasterTasks;
 using Occumetric.Server.Areas.TaskCategories;
 using Occumetric.Server.Areas.Tenants;
@@ -25,6 +26,7 @@ namespace Occumetric.Server.Areas.Shared
             services.AddTransient<IMasterTaskService, MasterTaskService>();
             services.AddTransient<IHelperService, HelperService>();
             services.AddTransient<IJobService, JobService>();
+            services.AddTransient<IJobTaskService, JobTaskService>();
 
             //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
             //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));

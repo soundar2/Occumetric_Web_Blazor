@@ -30,7 +30,7 @@
                         @item.Name
                     </td>
                     <td>
-                        <a href="@($"/tenants/{item.Id}")">Tenants</a>
+                        <a href="@($"/tenants/industry/{item.Id}")">Tenants</a>
                     </td>
                     <td>
                         <a href="@($"/taskCategories")">Task Categories</a>
@@ -62,7 +62,6 @@ else
     {
         try
         {
-            //_industryViewModels = await _httpClient.GetFromJsonAsync<List<IndustryViewModel>>("api/v1/industries");
             _industryViewModels = await _commonHttpService.GetAllIndustries();
             StateHasChanged();
         }

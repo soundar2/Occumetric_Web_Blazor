@@ -36,14 +36,13 @@
 @code {
     private CreateTenantDto _createTenantDto = new CreateTenantDto();
     private List<IndustryViewModel> _industries = new List<IndustryViewModel>();
-    private string _selectedIndustryId = "0";
     private string _createdResult = "";
     private string _errorMessage = "error";
     private async void OnValidSubmit()
     {
         try
         {
-            var response = await _httpClient.PostAsJsonAsync("api/v1/tenants", _createTenantDto);
+            var response = await _httpClient.PostAsJsonAsync(CommonHttpService.BaseUrl + "/tenants", _createTenantDto);
             Console.WriteLine("Success");
             if (response.IsSuccessStatusCode)
             {

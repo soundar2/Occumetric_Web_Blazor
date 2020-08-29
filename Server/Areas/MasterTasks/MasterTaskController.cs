@@ -23,7 +23,7 @@ namespace Occumetric.Server.Areas.MasterTasks
         {
             try
             {
-                var result = await Task.Run(() => _masterTaskService.GetMasterTasks(IndustryId));
+                var result = await Task.Run(() => _masterTaskService.Index(IndustryId));
                 return Ok(result);
             }
             catch (Exception e)
@@ -37,7 +37,7 @@ namespace Occumetric.Server.Areas.MasterTasks
         {
             try
             {
-                var result = await Task.Run(() => _masterTaskService.GetMasterTasks(IndustryId, CategoryId));
+                var result = await Task.Run(() => _masterTaskService.Index(IndustryId, CategoryId));
                 return Ok(result);
             }
             catch (Exception e)
@@ -46,12 +46,12 @@ namespace Occumetric.Server.Areas.MasterTasks
             }
         }
 
-        [HttpGet("{Id:int}")]
+        [HttpGet("viewGet/{Id:int}")]
         public async Task<ActionResult<MasterTaskViewModel>> Get([FromRoute] int Id)
         {
             try
             {
-                var result = await Task.Run(() => _masterTaskService.Get(Id));
+                var result = await Task.Run(() => _masterTaskService.ViewGet(Id));
                 return Ok(result);
             }
             catch (Exception e)
@@ -60,12 +60,12 @@ namespace Occumetric.Server.Areas.MasterTasks
             }
         }
 
-        [HttpGet("forUpdate/{Id:int}")]
+        [HttpGet("updateGet/{Id:int}")]
         public async Task<ActionResult<UpdateMasterTaskDto>> GetForUpdate([FromRoute] int Id)
         {
             try
             {
-                var result = await Task.Run(() => _masterTaskService.GetForUpdate(Id));
+                var result = await Task.Run(() => _masterTaskService.UpdateGet(Id));
                 return Ok(result);
             }
             catch (Exception e)

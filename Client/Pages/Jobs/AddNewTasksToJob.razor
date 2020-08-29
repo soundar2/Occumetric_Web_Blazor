@@ -1,0 +1,60 @@
+﻿@page "/jobs/addTasks/{JobId:int}"
+@using Occumetric.Shared
+@inject HttpClient _httpClient
+@inject ICommonHttpService _commonHttpService
+<h3>Add New Tasks to Job</h3>
+<p>Message: @_message</p>
+<EditForm Model="_masterTaskIds" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <SelectMasterTasks OnSelectedMasterTasksChanged="OnSelectedMasterTasksChanged"></SelectMasterTasks>
+    <table>
+        <tr>
+            <td>
+                <input type="submit" value="Submit" disabled="@IsDisabled" class="btn btn-primary" />
+            </td>
+        </tr>
+    </table>
+</EditForm>
+
+@code {
+    [Parameter] public int JobId { get; set; }
+    private List<int> _masterTaskIds { get; set; } = new List<int>();
+    private string _message = "...";
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
+    private void OnSelectedMasterTasksChanged(List<MasterTaskViewModel> vmList)
+    {
+        _masterTaskIds.Clear();
+        _masterTaskIds.AddRange((from item in vmList select item.Id).ToList());
+    }
+
+    private async void OnValidSubmit()
+    {
+        Console.WriteLine("valid submit");
+        try
+        {
+
+            var result = await _commonHttpService.PostGeneric<List<int>>($"/jobs/addNewTasks/{JobId}", _masterTaskIds);
+            if (result.result == true)
+            {
+                _message = "Success:" + result.message;
+            }
+            else
+            {
+
+                _message = "Error:" + result.message;
+            }
+
+        }
+        catch (Exception e)
+        {
+            _message = e.Message;
+        }
+        StateHasChanged();
+    }
+
+    private bool IsDisabled => !_masterTaskIds.Any();
+}

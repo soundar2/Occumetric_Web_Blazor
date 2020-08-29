@@ -27,7 +27,7 @@
     private string _errorMessage = "error";
     private async void OnValidSubmit()
     {
-        var response = await _httpClient.PutAsJsonAsync<UpdateTaskCategoryDto>("api/v1/taskCategories", _updateTaskCategoryDto);
+        var response = await _httpClient.PutAsJsonAsync<UpdateTaskCategoryDto>(CommonHttpService.BaseUrl + "/taskCategories", _updateTaskCategoryDto);
         if (response.IsSuccessStatusCode)
         {
             _navigationManager.NavigateTo($"/taskCategories");
@@ -42,7 +42,7 @@
     protected async override void OnInitialized()
     {
         base.OnInitialized();
-        var vm = await _httpClient.GetFromJsonAsync<TaskCategoryViewModel>($"api/v1/taskCategories/{Id}");
+        var vm = await _httpClient.GetFromJsonAsync<TaskCategoryViewModel>(CommonHttpService.BaseUrl + $"/taskCategories/{Id}");
         _updateTaskCategoryDto = new UpdateTaskCategoryDto
         {
             Id = vm.Id,

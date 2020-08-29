@@ -25,7 +25,7 @@
     {
         try
         {
-            var response = await _httpClient.PostAsJsonAsync("api/v1/industries", CreateIndustryDto);
+            var response = await _httpClient.PostAsJsonAsync<CreateIndustryDto>(CommonHttpService.BaseUrl + "/industries", CreateIndustryDto);
             Console.WriteLine("Success");
             if (response.IsSuccessStatusCode)
             {
