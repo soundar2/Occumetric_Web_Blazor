@@ -22,7 +22,7 @@
                 Effort Type:
             </td>
             <td>
-                <InputSelect class="form-control required" @bind-Value="@_updateJobTaskDto.EffortType" @onblur="CalculateNioshIndex">
+                <InputSelect class="form-control required" @bind-Value="@_updateJobTaskDto.EffortType">
                     @foreach (var item in _effortTypes)
                     {
                         <option value="@item.Type">@item.Type</option>
@@ -31,8 +31,10 @@
                 <ValidationMessage For="@(() => _updateJobTaskDto.EffortType)" />
             </td>
         </tr>
+
         @if (_updateJobTaskDto.EffortType.Contains("Manual"))
         {
+
             <tr class="animate__animated animate__bounceInLeft ">
                 <td>
                     Description (for Manual Tasks):
@@ -48,10 +50,8 @@
             </td>
             <td>
                 <input type="text" @bind-value="WtLb" @onblur="CalculateNioshIndex" />
-                @*<InputNumber class="form-control required" @bind-Value="_weightLb"></InputNumber>*@
             </td>
         </tr>
-
         @if (_updateJobTaskDto.EffortType.Contains("Lift"))
         {
 
@@ -60,7 +60,7 @@
                     Begin Lift:
                 </td>
                 <td>
-                    <InputText class="form-control" @bind-Value="FromHeight" @onblur="CalculateNioshIndex"></InputText>
+                    <InputText class="form-control" @bind-Value="FromHeight" @onblur="CalculateNioshIndex" />
                     <ValidationMessage For="@(() => _updateJobTaskDto.FromHeight)" />
                 </td>
             </tr>
@@ -69,7 +69,7 @@
                     End Lift:
                 </td>
                 <td>
-                    <InputText class="form-control" @bind-Value="ToHeight" @onblur="CalculateNioshIndex"></InputText>
+                    <InputText class="form-control" @bind-Value="ToHeight" @onblur="CalculateNioshIndex" />
                     <ValidationMessage For="@(() => _updateJobTaskDto.ToHeight)" />
                 </td>
             </tr>
@@ -78,7 +78,7 @@
                     Lift Frequency:
                 </td>
                 <td>
-                    <InputSelect class="form-control required" @bind-Value="@_updateJobTaskDto.LiftFrequencyType" @onblur="CalculateSnooks">
+                    <InputSelect class="form-control required" @bind-Value="@_updateJobTaskDto.LiftFrequencyType">
                         @foreach (var item in _liftFrequencyTypes)
                             {
                             <option value="@item.Type">@item.Type</option>
@@ -99,9 +99,24 @@
                     </InputSelect>
                 </td>
             </tr>
+            <tr class="animate__animated animate__bounceInLeft ">
+                <td>
+                    Niosh Index:
+                </td>
+                <td>
+                    <NioshBadge NioshValue="_nioshIndex"></NioshBadge>
+                </td>
+            </tr>
+            <tr class="animate__animated animate__bounceInLeft ">
+                <td>
+                    Snooks:
+                </td>
+                <td>
+                    <SnooksGraph SnooksViewModel="_snooksViewModel"></SnooksGraph>
+                </td>
+            </tr>
         }
     </table>
-
     <table>
         <tr>
             <td>
