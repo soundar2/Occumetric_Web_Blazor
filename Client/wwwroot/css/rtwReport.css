@@ -1,0 +1,135 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+div.border {
+  position: absolute;
+  top: 0in;
+  left: 0in;
+  width: 10in;
+  height: 7.5in;
+  z-index: -1;
+  overflow: hidden;
+}
+div.border > table {
+  border-collapse: collapse;
+  left: 0;
+  width: 94%;
+  position: absolute;
+  margin-bottom: 0;
+  margin-top: 0;
+  box-sizing: border-box;
+}
+table.header {
+  top: 0;
+  height: 0.5in;
+  max-height: 0.5in;
+  padding: 0;
+}
+table.header td.logo {
+  width: 2in;
+  height: 0.5in;
+  overflow: hidden;
+  vertical-align: center;
+  margin: auto;
+}
+table.header td.title {
+  height: 0.5in;
+  text-align: center;
+  font-size: 0.32in;
+  padding-top: 0.05in;
+  font-weight: bold;
+  vertical-align: center;
+  height: 100%;
+}
+table.header img.occ-logo {
+  height: 95%;
+  margin-left: auto;
+  margin-right: auto;
+}
+table.job-title {
+  top: 0.55in;
+  height: 0.3in;
+}
+table.job-title td {
+  width: 100%;
+}
+table.job-title td span.header {
+  font-size: 105%;
+  font-weight: bold;
+  text-align: left;
+}
+table.job-title td span.underline {
+  display: inline-block;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  border-bottom: 1px solid black;
+  width: 18rem;
+}
+table.manual {
+  top: 0.9in;
+  height: 3.3in;
+}
+table.arm-hand {
+  top: 3.9in;
+  height: 3.3in;
+}
+table.manual td,
+table.arm-hand td {
+  padding: 0.8mm;
+  border: 1px solid gray;
+  height: 0.3in;
+}
+table.manual td:nth-child(1),
+table.arm-hand td:nth-child(1) {
+  width: 10% !important;
+}
+table.manual td:nth-child(2),
+table.arm-hand td:nth-child(2) {
+  width: 15% !important;
+}
+table.manual td.header,
+table.arm-hand td.header,
+table.manual span.header,
+table.arm-hand span.header {
+  font-size: 105%;
+  font-weight: bold;
+  text-align: left;
+}
+table.manual tr.estimate span.header,
+table.arm-hand tr.estimate span.header {
+  font-size: 80%;
+}
+table.manual tr.estimate span.underline,
+table.arm-hand tr.estimate span.underline {
+  display: inline-block;
+  margin-left: 0.05in;
+  margin-right: 0.05in;
+  border-bottom: 1px solid black;
+  width: 0.85in;
+}
+table.manual tr.recovery td,
+table.arm-hand tr.recovery td {
+  height: 0.6in;
+  vertical-align: top;
+}
+table.signature {
+  top: 7.2in;
+  height: 0.3in;
+}
+table.signature td.header {
+  font-size: 105%;
+  font-weight: bold;
+  text-align: left;
+  width: 50%;
+  overflow: hidden;
+}
+table.signature td.header span.underline {
+  display: inline-block;
+  margin-left: 0.1in;
+  border-bottom: 1px solid black;
+  width: 2.7in;
+}
+tr.bb-1 td {
+  border-bottom: 1px solid black;
+}

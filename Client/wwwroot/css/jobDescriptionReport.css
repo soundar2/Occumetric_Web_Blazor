@@ -1,0 +1,71 @@
+body {
+  margin: 0;
+  margin-left: 0.5in;
+  padding: 0;
+}
+table {
+  border-collapse: collapse;
+  left: 0;
+}
+table.job-header {
+  padding-top: 0px;
+  margin-top: 0px;
+}
+table.job-header td {
+  padding: 0.4rem;
+  border: 1px solid #2595b5;
+}
+table.job-header td:nth-child(1) {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  background-color: #cbebf4;
+  font-weight: bold;
+}
+table.job-header td {
+  min-width: 10rem;
+}
+table.job-header tbody tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+table.job-header th,
+table.job-header td {
+  font-size: 1rem;
+}
+table.disclaimer {
+  margin-top: 1rem;
+}
+table.tasks {
+  margin-top: 1rem;
+  width: 95%;
+}
+table.tasks th,
+table.tasks td {
+  padding: 0.5rem;
+  border: 1px solid #2595b5;
+}
+table.tasks th {
+  font-size: 105%;
+  background-color: #cbebf4;
+  font-weight: bold;
+}
+table.tasks td {
+  min-width: 10rem;
+}
+table.tasks tbody tr:nth-child(odd) {
+  background-color: #e9f6fa;
+}
+table.tasks td:nth-child(n + 3),
+table.tasks th:nth-child(n + 3),
+table.tasks th:nth-child(1),
+table.tasks td:nth-child(1) {
+  text-align: center;
+}
+table.reduced th {
+  background-color: #eac180;
+}
+table.reduced tbody tr:nth-child(odd) {
+  background-color: #f7e7ce;
+}
+p.page-break-before {
+  page-break-before: always;
+}

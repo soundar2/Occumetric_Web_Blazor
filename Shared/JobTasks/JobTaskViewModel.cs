@@ -1,6 +1,8 @@
-﻿namespace Occumetric.Shared
+﻿using System;
+
+namespace Occumetric.Shared
 {
-    public class JobTaskViewModel
+    public class JobTaskViewModel : ICloneable
     {
         public int Id { get; set; }
 
@@ -37,5 +39,67 @@
         public string LiftDurationType { get; set; }
 
         public string LiftFrequencyType { get; set; }
+
+        public string OrgToHeight { get; set; }
+
+        public string OrgFromHeight { get; set; }
+
+        public bool IsModifiedForBatteryOfTests { get; set; }
+        public bool IsSplitForBatteryOfTests { get; set; }
+        public bool IsNewForBatteryOfTests { get; set; }
+
+        //
+        //for reports
+        //we use bucket to sort weights
+        //
+        public int BucketNo
+        {
+            get
+            {
+                return (int)this.WeightLb / 10;
+            }
+        }
+
+        public int HeightRange
+        {
+            get
+            {
+                return Math.Abs((this.IntToHeight - this.IntFromHeight));
+            }
+        }
+
+        public bool BracketsAnotherLift(JobTaskViewModel that)
+        {
+            //
+            //different weight but
+            //within the same bucket
+            //
+            //
+            //   |-----------------------------------| source
+            //        |----------------------------| target
+            //
+            return (this.Id != that.Id &&
+                this.WeightLb >= that.WeightLb &&
+                this.IntFromHeight <= that.IntFromHeight &&
+                this.IntToHeight >= that.IntToHeight &&
+                this.BucketNo == that.BucketNo);
+        }
+
+        public object Clone()
+        {
+            return (JobTaskViewModel)this.MemberwiseClone();
+        }
+
+        public bool OverlapsAnotherLift(JobTaskViewModel that)
+        {
+            //
+            //same weight
+            //
+            return (this.Id != that.Id &&
+                this.WeightLb == that.WeightLb &&
+                this.IntFromHeight <= that.IntFromHeight &&
+                this.IntToHeight >= that.IntToHeight &&
+                this.BucketNo == that.BucketNo);
+        }
     }
 }

@@ -1,12 +1,108 @@
 ﻿@page "/pdaReport/{JobId:int}"
 @using Occumetric.Shared
 @inject ICommonHttpService _commonHttpService
-<h3>PDA_Report</h3>
+<img class="occ-logo" src="/images/occumetric-logo.png" alt="" />
+<p class="date">
+    @DateTime.UtcNow.ToString("MMM dd, yyyy")
+</p>
 <h3>
-    @_jobViewModel.Name
-    <br />
-    @_jobViewModel.Description
+    Essential Functions - Physical Demand Assessment Report
 </h3>
+
+<div>
+    <table class="job-header">
+        <tbody>
+            <tr>
+                <td>Job Title / Position</td>
+                <td>
+                    @_jobViewModel.Name
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="disclaimer">
+        <tr>
+            <td>
+                The activities below are considered basic job duties that an employee must be able to perform, with or without reasonable accommodation. The job duties are considered Essential Functions for the position specified above.
+            </td>
+        </tr>
+    </table>
+    <table class="tasks">
+        <thead>
+            <tr>
+                <th>
+                    No.
+                </th>
+                <th>
+                    Activity
+                </th>
+                <th>
+                    Weight
+                </th>
+                <th>
+                    Begin Lift
+                </th>
+                <th>
+                    End Lift
+                </th>
+                <th>
+                    Action
+                </th>
+                <th>
+                    Lift Duration
+                </th>
+                <th>
+                    Lift Frequency (over a 15 min period)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int loopIndex = 1;
+            }
+            @foreach (var t in _jobViewModel.JobTaskViewModels)
+            {
+                <tr>
+                    <td>
+                        @(loopIndex++)
+                    </td>
+                    <td>
+                        @t.Name
+                    </td>
+
+                    <td>
+                        @if (t.WeightLb > 0)
+                        {
+                            <span>@t.WeightLb</span> <span>lbs.</span>
+                        }
+                    </td>
+                    <td>
+                        @t.FromHeight
+                    </td>
+                    <td>
+                        @t.ToHeight
+                    </td>
+                    <td>
+                        @t.EffortType
+                    </td>
+                    <td>
+                        @if (t.EffortType.Contains("Lift"))
+                        {
+                            <p>@t.LiftDurationType</p>
+                        }
+                    </td>
+                    <td>
+                        @if (t.EffortType.Contains("Lift"))
+                        {
+                            <p>@t.LiftFrequencyType</p>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
 @code {
     [Parameter] public int JobId { get; set; }
     public List<JobTaskViewModel> _jobTasks = new List<JobTaskViewModel>();
@@ -30,5 +126,13 @@
             Console.WriteLine("Exception");
             Console.WriteLine(e.Message);
         }
+    }
+
+    private DateTime PST_Time(DateTime utcTime)
+    {
+        string pstZoneId = "Pacific Standard Time";
+        TimeZoneInfo pstZone = TimeZoneInfo.FindSystemTimeZoneById(pstZoneId);
+
+        return TimeZoneInfo.ConvertTimeFromUtc(utcTime, pstZone);
     }
 }
