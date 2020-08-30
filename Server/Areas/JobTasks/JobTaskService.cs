@@ -87,21 +87,28 @@ namespace Occumetric.Server.Areas.JobTasks
             return true;
         }
 
-        public List<JobTaskViewModel> CollectLifts(int jobId)
+        private List<JobTaskViewModel> CollectLifts(int jobId)
         {
             var lifts = (from j in _context.Jobs
                          where j.Id == jobId
                          from t in j.JobTasks
                          where t.EffortType.Contains("Lift") &&
-                         t.WeightLb > 1
-                         select _mapper.Map<JobTaskViewModel>(t))
-                         .OrderBy(x => x.BucketNo)
+                         t.WeightLb > 1 &&
+                         t.IntFromHeight >= 0 &&
+                         t.IntToHeight >= 0
+                         select _mapper.Map<JobTaskViewModel>(t)).ToList();
+            foreach (var item in lifts)
+            {
+                item.IntFromHeight = Utility.SanitizeStringToInteger(item.FromHeight);
+                item.IntToHeight = Utility.SanitizeStringToInteger(item.ToHeight);
+            }
+            return lifts.OrderBy(x => x.BucketNo)
                          .ThenBy(x => x.WeightLb)
+                         .Where(x => x.FromHeight != x.ToHeight)
                          .ToList();
-            return lifts;
         }
 
-        public List<JobTaskViewModel> DeleteBracketingLiftsWithinBucket(List<JobTaskViewModel> lifts)
+        private List<JobTaskViewModel> DeleteBracketingLiftsWithinBucket(List<JobTaskViewModel> lifts)
         {
             //
             //if there are 2 lifts A and B with identical weights,
@@ -109,10 +116,12 @@ namespace Occumetric.Server.Areas.JobTasks
             // remove lift B (don't have to consider it)
             //
             List<int> IdsToDelete = new List<int>();
-            foreach (JobTaskViewModel source in lifts.Where(x => !IdsToDelete.Contains(x.Id)))
+            foreach (JobTaskViewModel source in lifts)
             {
-                foreach (JobTaskViewModel target in lifts.Where(x => !IdsToDelete.Contains(x.Id) && x.Id != source.Id))
+                if (IdsToDelete.Contains(source.Id)) continue;
+                foreach (JobTaskViewModel target in lifts.Where(x => x.Id != source.Id))
                 {
+                    if (IdsToDelete.Contains(target.Id)) continue;
                     if (source.BracketsAnotherLift(target))
                     {
                         IdsToDelete.Add(target.Id);
@@ -123,22 +132,20 @@ namespace Occumetric.Server.Areas.JobTasks
             return lifts;
         }
 
-        public List<JobTaskViewModel> RemoveOverlappingLifts(List<JobTaskViewModel> lifts)
+        private List<JobTaskViewModel> RemoveOverlappingLifts(List<JobTaskViewModel> lifts)
         {
             //
             //is there an overlap (identical weight and height range is bracketed
             // then merge
             //
             List<int> IdsToDelete = new List<int>();
-            foreach (var item in lifts)
+
+            foreach (JobTaskViewModel source in lifts)
             {
-                item.IntFromHeight = Utility.SanitizeStringToInteger(item.FromHeight);
-                item.IntToHeight = Utility.SanitizeStringToInteger(item.ToHeight);
-            }
-            foreach (JobTaskViewModel source in lifts.Where(x => !IdsToDelete.Contains(x.Id)))
-            {
-                foreach (JobTaskViewModel target in lifts.Where(x => !IdsToDelete.Contains(x.Id) && x.Id != source.Id))
+                if (IdsToDelete.Contains(source.Id)) continue;
+                foreach (JobTaskViewModel target in lifts.Where(x => x.Id != source.Id))
                 {
+                    if (IdsToDelete.Contains(target.Id)) continue;
                     if (source.OverlapsAnotherLift(target))
                     {
                         source.IsModifiedForBatteryOfTests = true;
@@ -150,7 +157,7 @@ namespace Occumetric.Server.Areas.JobTasks
             return lifts;
         }
 
-        public List<JobTaskViewModel> SplitReduntantLifts(List<JobTaskViewModel> lifts)
+        private List<JobTaskViewModel> SplitReduntantLifts(List<JobTaskViewModel> lifts)
         {
             //
             //A: 35 lb, 12 to 28 in
@@ -262,10 +269,17 @@ namespace Occumetric.Server.Areas.JobTasks
                 }
             }
             lifts.AddRange(newTasks);
+            return lifts;
+        }
+
+        public List<JobTaskViewModel> SimplifyListsForBotReport(int jobId)
+        {
+            var lifts = this.CollectLifts(jobId);
+            lifts = this.DeleteBracketingLiftsWithinBucket(lifts);
+            lifts = this.RemoveOverlappingLifts(lifts);
             return lifts.OrderBy(x => x.WeightLb).ThenBy(x => x.IntFromHeight).ToList();
         }
-    }
 
-    //------------
-}
-}
+        //------------
+    } // end class
+} // end namespace

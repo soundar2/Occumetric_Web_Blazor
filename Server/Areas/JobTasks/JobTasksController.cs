@@ -58,5 +58,16 @@ namespace Occumetric.Server.Areas.Jobs
             await Task.Run(() => _jobTaskService.Update(dto));
             return Ok();
         }
+
+        [HttpGet("botReport/{JobId:int}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> SimplifyTasksForBotReport([FromRoute] int JobId)
+        {
+            var result = await Task.Run(() =>
+            {
+                return _jobTaskService.SimplifyListsForBotReport(JobId);
+            });
+            return Ok(result);
+        }
     } // end class
 }

@@ -1,4 +1,5 @@
 ﻿using Occumetric.Shared;
+using System.Collections.Generic;
 
 namespace Occumetric.Server.Areas.JobTasks
 {
@@ -9,5 +10,7 @@ namespace Occumetric.Server.Areas.JobTasks
         bool Update(UpdateJobTaskDto dto);
 
         UpdateJobTaskDto UpdateGet(int id);
+
+        List<JobTaskViewModel> SimplifyListsForBotReport(int jobId);
     }
 }
