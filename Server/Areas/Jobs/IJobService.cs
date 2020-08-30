@@ -12,5 +12,7 @@ namespace Occumetric.Server.Areas.Jobs
         bool AddNewTasksToJob(int jobId, List<int> MasterTaskIds);
 
         TenantSummary GetJobCountsByTenant();
+
+        JobViewModel ViewGet(int jobId);
     }
 }

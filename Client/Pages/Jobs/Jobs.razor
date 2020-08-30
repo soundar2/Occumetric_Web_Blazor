@@ -18,6 +18,9 @@
                                 Name
                             </th>
                             <th>
+                                Reports
+                            </th>
+                            <th>
                                 Add New Tasks
                             </th>
                         </tr>
@@ -36,9 +39,10 @@
                                         @item.Name
                                     </button>
                                 </td>
-
                                 <td>
-
+                                    <a href="/pdaReport/@item.Id">PDA Report</a>
+                                </td>
+                                <td>
                                     <a href="/jobs/addTasks/@item.Id">Add New Tasks</a>
                                 </td>
                             </tr>

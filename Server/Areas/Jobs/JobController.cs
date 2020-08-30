@@ -38,6 +38,14 @@ namespace Occumetric.Server.Areas.Jobs
             }
         }
 
+        [HttpGet("viewGet/{JobId:int}")]
+        [AllowAnonymous]
+        public async Task<ActionResult<JobViewModel>> ViewGet([FromRoute] int JobId)
+        {
+            var result = await Task.Run(() => _jobService.ViewGet(JobId));
+            return Ok(result);
+        }
+
         [HttpPost("counts")]
         [AllowAnonymous]
         public async Task<ActionResult<TenantSummary>> GetJobCounts()
@@ -74,53 +82,57 @@ namespace Occumetric.Server.Areas.Jobs
             });
         }
 
-        [HttpGet("jobTasks/forUpdate")]
-        public async Task<ActionResult<UpdateJobTaskDto>> GetJobTask([FromRoute] int TaskId)
-        {
-            try
-            {
-                var result = await Task.Run(() => _jobTaskService.ViewGet(TaskId));
-                return Ok(result);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
+        #region JobTasks
 
-        [HttpGet("jobTasks")]
-        public async Task<ActionResult<JobTaskViewModel>> UpdateGetJobTask([FromRoute] int TaskId)
-        {
-            try
-            {
-                var result = await Task.Run(() => _jobTaskService.ViewGet(TaskId));
-                return Ok(result);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
+        //[HttpGet("jobTasks/forUpdate")]
+        //public async Task<ActionResult<UpdateJobTaskDto>> GetJobTask([FromRoute] int TaskId)
+        //{
+        //    try
+        //    {
+        //        var result = await Task.Run(() => _jobTaskService.ViewGet(TaskId));
+        //        return Ok(result);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return BadRequest(e.Message);
+        //    }
+        //}
 
-        [HttpGet("jobTasks")]
-        public async Task<ActionResult<JobTaskViewModel>> ViewGetJobTask([FromRoute] int TaskId)
-        {
-            try
-            {
-                var result = await Task.Run(() => _jobTaskService.ViewGet(TaskId));
-                return Ok(result);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
+        //[HttpGet("jobTasks")]
+        //public async Task<ActionResult<JobTaskViewModel>> UpdateGetJobTask([FromRoute] int TaskId)
+        //{
+        //    try
+        //    {
+        //        var result = await Task.Run(() => _jobTaskService.ViewGet(TaskId));
+        //        return Ok(result);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return BadRequest(e.Message);
+        //    }
+        //}
 
-        [HttpPut("jobTasks")]
-        public async Task<IActionResult> UpdateJobTask(UpdateJobTaskDto dto)
-        {
-            await Task.Run(() => _jobTaskService.Update(dto));
-            return Ok();
-        }
+        //[HttpGet("jobTasks")]
+        //public async Task<ActionResult<JobTaskViewModel>> ViewGetJobTask([FromRoute] int TaskId)
+        //{
+        //    try
+        //    {
+        //        var result = await Task.Run(() => _jobTaskService.ViewGet(TaskId));
+        //        return Ok(result);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return BadRequest(e.Message);
+        //    }
+        //}
+
+        //[HttpPut("jobTasks")]
+        //public async Task<IActionResult> UpdateJobTask(UpdateJobTaskDto dto)
+        //{
+        //    await Task.Run(() => _jobTaskService.Update(dto));
+        //    return Ok();
+        //}
+
+        #endregion JobTasks
     } // end class
 }

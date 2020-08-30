@@ -1,0 +1,34 @@
+﻿@page "/pdaReport/{JobId:int}"
+@using Occumetric.Shared
+@inject ICommonHttpService _commonHttpService
+<h3>PDA_Report</h3>
+<h3>
+    @_jobViewModel.Name
+    <br />
+    @_jobViewModel.Description
+</h3>
+@code {
+    [Parameter] public int JobId { get; set; }
+    public List<JobTaskViewModel> _jobTasks = new List<JobTaskViewModel>();
+    public JobViewModel _jobViewModel = new JobViewModel();
+    protected async override void OnInitialized()
+    {
+        base.OnInitialized();
+        await FetchData();
+
+    }
+    private async Task FetchData()
+    {
+        try
+        {
+
+            _jobViewModel = await _commonHttpService.GetGeneric<JobViewModel>($"/jobs/viewGet/{JobId}");
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Exception");
+            Console.WriteLine(e.Message);
+        }
+    }
+}
