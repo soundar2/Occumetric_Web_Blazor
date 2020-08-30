@@ -147,6 +147,7 @@
         _liftFrequencyTypes = await _commonHttpService.GetLiftFrequencyTypes();
         _liftDurationTypes = await _commonHttpService.GetLiftDurationTypes();
         _updateJobTaskDto = await _httpClient.GetFromJsonAsync<UpdateJobTaskDto>(CommonHttpService.BaseUrl + $"/jobTasks/updateGet/{TaskId}");
+        CalculateNioshIndex();
     }
     private async void OnValidSubmit()
     {
@@ -154,7 +155,7 @@
         try
         {
 
-            var result = await _commonHttpService.PutGeneric<UpdateJobTaskDto>("/jobs/tasks", _updateJobTaskDto);
+            var result = await _commonHttpService.PutGeneric<UpdateJobTaskDto>("/jobTasks", _updateJobTaskDto);
             if (result.result == true)
             {
                 message = "Success:" + result.message;

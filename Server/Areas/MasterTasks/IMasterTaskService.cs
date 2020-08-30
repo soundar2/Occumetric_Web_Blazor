@@ -7,6 +7,8 @@ namespace Occumetric.Server.Areas.MasterTasks
     {
         List<MasterTaskViewModel> Index(int IndustryId, int CategoryId = 0);
 
+        List<MasterTaskViewModel> Search(int industryId, string needle);
+
         //List<MasterTaskViewModel> GetMasterTaskForCategory(int industryId, int CategoryId);
 
         MasterTaskViewModel ViewGet(int id);

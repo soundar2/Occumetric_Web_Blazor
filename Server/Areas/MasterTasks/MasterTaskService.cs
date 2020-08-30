@@ -56,6 +56,36 @@ namespace Occumetric.Server.Areas.MasterTasks
             return mtViewModels;
         }
 
+        public List<MasterTaskViewModel> Search(int industryId, string needle)
+        {
+            List<MasterTask> dbMasterTasks;
+
+            dbMasterTasks = (from t in _context.MasterTasks
+                             where t.IndustryId == industryId
+                             && t.Name.Contains(needle)
+                             orderby t.Name
+                             select t).ToList();
+
+            var mtIds = (from item in dbMasterTasks select item.Id).ToList(); //master Task Ids
+            var dbTcList = (from map in _context.TaskCategoryMaps
+                            where mtIds.Contains(map.MasterTaskId)
+                            from tc in _context.TaskCategories
+                            where tc.Id == map.TaskCategoryId
+                            orderby tc.Name
+                            select new
+                            {
+                                MtId = map.MasterTaskId,
+                                TaskCategory = tc
+                            }).ToList();
+            List<MasterTaskViewModel> mtViewModels = _mapper.Map<List<MasterTaskViewModel>>(dbMasterTasks);
+            foreach (var mtVm in mtViewModels)
+            {
+                mtVm.TaskCategoryViewModels = _mapper.Map<List<TaskCategoryViewModel>>((from item in dbTcList where item.MtId == mtVm.Id select item.TaskCategory).ToList());
+            }
+
+            return mtViewModels;
+        }
+
         public MasterTaskViewModel ViewGet(int id)
         {
             var dbMasterTask = _context.MasterTasks.Find(id);

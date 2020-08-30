@@ -25,6 +25,7 @@ namespace Occumetric.Server.Areas.Jobs
             List<Job> dbJobs = _context.Jobs
                 .Include(j => j.JobTasks)
                 .Where(x => x.TenantId == tenantId)
+                .OrderBy(x => x.Name)
                 .Select(x => x)
                 .ToList();
 
@@ -93,6 +94,7 @@ namespace Occumetric.Server.Areas.Jobs
         public bool AddNewTasksToJob(int jobId, List<int> MasterTaskIds)
         {
             var dbJob = _context.Jobs.Find(jobId);
+
             foreach (int id in MasterTaskIds)
             {
                 MasterTask mt = _context.MasterTasks
@@ -104,6 +106,18 @@ namespace Occumetric.Server.Areas.Jobs
                 //no need to recalculate  here
                 //
                 JobTask jobTask = _mapper.Map<JobTask>(mt);
+
+                //
+                //if this task name is already taken?
+                //
+                var exists = (from item in _context.JobTasks
+                              where item.JobId == dbJob.Id &&
+                              item.Name == jobTask.Name
+                              select item).Any();
+                if (exists)
+                {
+                    throw new OccumetricException("This task name has alreay been added to this job.");
+                }
                 dbJob.JobTasks.Add(jobTask);
             }
             _context.SaveChanges();

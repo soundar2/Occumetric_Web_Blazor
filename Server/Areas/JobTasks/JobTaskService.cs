@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using Occumetric.Server.Areas.Common;
 using Occumetric.Server.Areas.Helpers;
 using Occumetric.Server.Areas.Jobs;
 using Occumetric.Server.Areas.Shared;
 using Occumetric.Server.Data;
 using Occumetric.Shared;
+using System.Linq;
 
 namespace Occumetric.Server.Areas.JobTasks
 {
@@ -22,15 +24,30 @@ namespace Occumetric.Server.Areas.JobTasks
             return _mapper.Map<JobTaskViewModel>(task);
         }
 
-        public UpdateJobTaskDto UpdateGet(int id)
+        public UpdateJobTaskDto UpdateGet(int jobTaskId)
         {
-            var task = _context.JobTasks.Find(id);
-            return _mapper.Map<UpdateJobTaskDto>(task);
+            var updatedTask = _context.JobTasks.Find(jobTaskId);
+
+            return _mapper.Map<UpdateJobTaskDto>(updatedTask);
         }
 
         public bool Update(UpdateJobTaskDto dto)
         {
             var dbJobTask = _context.JobTasks.Find(dto.Id);
+
+            //
+            //make sure this task name is unique for this
+            //jobTask
+            //
+            bool exists = (from item in _context.JobTasks
+                           where item.Id != dbJobTask.Id
+                            && item.Name == dto.Name
+                            && item.JobId == dbJobTask.JobId
+                           select item).Any();
+            if (exists)
+            {
+                throw new OccumetricException("This task name is already taken in this job description.");
+            }
 
             //
             //calculate niosh and snooks

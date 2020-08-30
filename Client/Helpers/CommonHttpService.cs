@@ -40,6 +40,12 @@ namespace Occumetric.Client.Helpers
             return result;
         }
 
+        public async Task<List<MasterTaskViewModel>> SearchForMasterTasks(int industryId, string searchFor)
+        {
+            var result = await _httpClient.GetFromJsonAsync<List<MasterTaskViewModel>>(BaseUrl + $"/masterTasks/industry/{industryId}/search/{searchFor}");
+            return result;
+        }
+
         public async Task<List<EffortTypeViewModel>> GetEffortTypes()
         {
             var result = await _httpClient.GetFromJsonAsync<List<EffortTypeViewModel>>(BaseUrl + "/helpers/effortTypes");

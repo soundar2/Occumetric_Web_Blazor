@@ -1,5 +1,4 @@
-﻿@*@page "/selectTasks"*@
-@using Occumetric.Shared
+﻿@using Occumetric.Shared
 @inject ICommonHttpService _commonHttpService
 <table>
     <tr>
@@ -11,6 +10,7 @@
                 <InputSelect class="form-control required"
                              ValueExpression="@(()=>_selectedCategoryId)"
                              TValue="string" ValueChanged="@((string value) => SelectedCategoryChanged(value ))">
+                    <option value="-1">--Select--</option>
                     <option value="0">--All Categories--</option>
                     @foreach (var item in _taskCategories)
                     {
@@ -18,28 +18,38 @@
                     }
                 </InputSelect>
             </EditForm>
-            @*<select @bind="_selectedCategoryId" @onblur="SelectedCategoryChanged">
-                </select>*@
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Search:
+        </td>
+        <td>
+            <input type="text" @bind-value="_searchString" placeholder="Enter search text" />
+            <input type="button" value="Search" class="btn btn-success" @onclick="SearchMasterTasks" @onclick:preventDefault="true" />
         </td>
     </tr>
 </table>
 <table>
     <tr>
         <td>
-            @if (_leftList.Count > 0)
-            {
-                <div class="left-list">
-                    @foreach (var item in _leftList)
-                    {
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" @bind="item.IsChecked" />
-                            </label>
-                            @item.Name
-                        </div>
-                    }
-                </div>
-            }
+            <div style="min-height:15rem;max-height:15rem;overflow:hidden;min-width:15rem;border:1px dashed teal">
+
+                @if (_leftList.Count > 0)
+                {
+                    <div class="left-list">
+                        @foreach (var item in _leftList)
+                        {
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" @bind="item.IsChecked" />
+                                </label>
+                                @item.Name
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
         </td>
         <td>
             <button @onclick="MoveRightClicked" @onclick:preventDefault="true">Move Right</button>
@@ -78,6 +88,7 @@
     private List<MasterTaskViewModel> _leftList = new List<MasterTaskViewModel>();
     private List<MasterTaskViewModel> _rightList = new List<MasterTaskViewModel>();
     private string _selectedCategoryId = "0";
+    private string _searchString = String.Empty;
     //
 
     protected override async void OnInitialized()
@@ -122,10 +133,21 @@
 
     private async Task SelectedCategoryChanged(string value)
     {
+        Console.WriteLine("Selected:" + value);
         _selectedCategoryId = value;
         _leftList = await _commonHttpService.GetMasterTasksForCategory(39, Convert.ToInt32(value));
         StateHasChanged();
     }
+
+    private async void SearchMasterTasks()
+    {
+        _leftList.Clear();
+        _leftList = await _commonHttpService.SearchForMasterTasks(39, _searchString);
+        StateHasChanged();
+
+    }
+
+    private bool IsSearchEnabled => _searchString.Trim().Length >= 4;
 }
 
 <style>

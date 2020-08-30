@@ -12,6 +12,8 @@ namespace Occumetric.Client.Helpers
 
         Task<List<MasterTaskViewModel>> GetMasterTasksForIndustry(int industryId);
 
+        Task<List<MasterTaskViewModel>> SearchForMasterTasks(int industryId, string searchFor);
+
         Task<List<MasterTaskViewModel>> GetMasterTasksForCategory(int industryId, int CategoryId);
 
         Task<List<EffortTypeViewModel>> GetEffortTypes();

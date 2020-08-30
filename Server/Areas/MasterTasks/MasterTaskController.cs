@@ -19,11 +19,26 @@ namespace Occumetric.Server.Areas.MasterTasks
         }
 
         [HttpGet("industry/{IndustryId:int}")]
-        public async Task<IActionResult> GetMasterTasksForIndustry([FromRoute] int IndustryId)
+        public async Task<IActionResult> Index([FromRoute] int IndustryId)
         {
             try
             {
                 var result = await Task.Run(() => _masterTaskService.Index(IndustryId));
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("industry/{IndustryId:int}/search/{searchFor}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Index([FromRoute] int IndustryId, string searchFor)
+        {
+            try
+            {
+                var result = await Task.Run(() => _masterTaskService.Search(IndustryId, searchFor));
                 return Ok(result);
             }
             catch (Exception e)
