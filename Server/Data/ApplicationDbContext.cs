@@ -8,7 +8,6 @@ using Occumetric.Server.Areas.Jobs;
 using Occumetric.Server.Areas.MasterTasks;
 using Occumetric.Server.Areas.Shared;
 using Occumetric.Server.Areas.TaskCategories;
-using Occumetric.Server.Areas.Tenants;
 using Occumetric.Server.Areas.User;
 using Occumetric.Server.Models;
 using System;
@@ -31,7 +30,7 @@ namespace Occumetric.Server.Data
         }
 
         public DbSet<Industry> Industries { get; set; }
-        public DbSet<Tenant> Tenants { get; set; }
+        public DbSet<Occumetric.Server.Areas.Tenants.Tenant> Tenants { get; set; }
         public DbSet<TaskCategory> TaskCategories { get; set; }
         public DbSet<MasterTask> MasterTasks { get; set; }
         public DbSet<TaskCategoryMap> TaskCategoryMaps { get; set; }
@@ -47,6 +46,7 @@ namespace Occumetric.Server.Data
         public DbSet<SnooksPercentage> SnooksPercentages { get; set; }
         public DbSet<Job> Jobs { get; set; }
         public DbSet<JobTask> JobTasks { get; set; }
+        public DbSet<Occumetric.Server.Areas.Applicants.Applicant> Applicants { get; set; }
 
         /// <summary>
         /// </summary>

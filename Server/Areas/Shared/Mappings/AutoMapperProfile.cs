@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Occumetric.Server.Areas.Applicants;
 using Occumetric.Server.Areas.Helpers;
 using Occumetric.Server.Areas.Industries;
 using Occumetric.Server.Areas.Jobs;
@@ -49,6 +50,11 @@ namespace Occumetric.Server.Areas.Shared
             CreateMap<JobTaskViewModel, SnooksCalculateDto>();
             CreateMap<UpdateJobTaskDto, JobTask>();
             CreateMap<JobTask, UpdateJobTaskDto>(); // for update
+
+            //
+            //applicants
+            //
+            CreateMap<Applicant, ApplicantViewModel>();
         }
     }
 }

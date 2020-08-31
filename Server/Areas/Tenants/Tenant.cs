@@ -1,4 +1,5 @@
-﻿using Occumetric.Server.Areas.Industries;
+﻿using Occumetric.Server.Areas.Applicants;
+using Occumetric.Server.Areas.Industries;
 using Occumetric.Server.Areas.Jobs;
 using Occumetric.Server.Models;
 using System.Collections.Generic;
@@ -28,6 +29,14 @@ namespace Occumetric.Server.Areas.Tenants
         {
             get => _jobs ?? (_jobs = new List<Job>());
             set => _jobs = value;
+        }
+
+        private List<Applicant> _applicants;
+
+        public virtual List<Applicant> Applicants
+        {
+            get => _applicants ?? (_applicants = new List<Applicant>());
+            set => _applicants = value;
         }
     }
 }
