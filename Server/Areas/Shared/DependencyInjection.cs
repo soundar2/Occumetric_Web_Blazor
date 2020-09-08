@@ -7,6 +7,7 @@ using Occumetric.Server.Areas.Industries;
 using Occumetric.Server.Areas.Jobs;
 using Occumetric.Server.Areas.JobTasks;
 using Occumetric.Server.Areas.MasterTasks;
+using Occumetric.Server.Areas.Sites;
 using Occumetric.Server.Areas.TaskCategories;
 using Occumetric.Server.Areas.Tenants;
 using System.Reflection;
@@ -27,6 +28,7 @@ namespace Occumetric.Server.Areas.Shared
             services.AddTransient<IHelperService, HelperService>();
             services.AddTransient<IJobService, JobService>();
             services.AddTransient<IJobTaskService, JobTaskService>();
+            services.AddTransient<ISiteService, SiteService>();
 
             //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
             //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));

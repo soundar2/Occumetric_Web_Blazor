@@ -9,4 +9,8 @@
     <PackageReference Include="ValueOf" Version="1.0.17" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Employees\" />
+  </ItemGroup>
+
 </Project>

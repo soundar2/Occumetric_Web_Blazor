@@ -5,6 +5,8 @@ namespace Occumetric.Server.Areas.Helpers
 {
     public interface IHelperService
     {
+        List<StateViewModel> GetStates();
+
         List<EffortTypeViewModel> GetEffortTypes();
 
         List<LiftFrequencyTypeViewModel> GetLiftFrequencyTypes();

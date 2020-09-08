@@ -16,6 +16,8 @@ namespace Occumetric.Client.Helpers
 
         Task<List<MasterTaskViewModel>> GetMasterTasksForCategory(int industryId, int CategoryId);
 
+        Task<List<StateViewModel>> GetStates();
+
         Task<List<EffortTypeViewModel>> GetEffortTypes();
 
         Task<List<LiftFrequencyTypeViewModel>> GetLiftFrequencyTypes();

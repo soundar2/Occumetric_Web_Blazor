@@ -1,8 +1,5 @@
 ﻿using AutoMapper;
 using Occumetric.Server.Data;
-using System.Linq;
-using System;
-using System.Collections.Generic;
 
 namespace Occumetric.Server.Areas.Shared
 {

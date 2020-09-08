@@ -17,6 +17,13 @@ namespace Occumetric.Server.Areas.Helpers
             _helperService = helperService;
         }
 
+        [HttpGet("states")]
+        [AllowAnonymous]
+        public IActionResult GetStates()
+        {
+            return Ok(_helperService.GetStates());
+        }
+
         [HttpGet("effortTypes")]
         [AllowAnonymous]
         public IActionResult GetEffortTypes()

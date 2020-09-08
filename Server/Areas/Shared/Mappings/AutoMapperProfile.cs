@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using Occumetric.Server.Areas.Applicants;
 using Occumetric.Server.Areas.Helpers;
 using Occumetric.Server.Areas.Industries;
 using Occumetric.Server.Areas.Jobs;
 using Occumetric.Server.Areas.MasterTasks;
+using Occumetric.Server.Areas.Sites;
 using Occumetric.Server.Areas.TaskCategories;
 using Occumetric.Server.Areas.Tenants;
 using Occumetric.Shared;
@@ -34,6 +34,7 @@ namespace Occumetric.Server.Areas.Shared
             CreateMap<LiftDurationType, LiftDurationTypeViewModel>();
             CreateMap<EffortType, EffortTypeViewModel>();
             CreateMap<LiftFrequencyType, LiftFrequencyTypeViewModel>();
+            CreateMap<State, StateViewModel>();
 
             //
             //jobs
@@ -52,9 +53,12 @@ namespace Occumetric.Server.Areas.Shared
             CreateMap<JobTask, UpdateJobTaskDto>(); // for update
 
             //
-            //applicants
+            //sites
             //
-            CreateMap<Applicant, ApplicantViewModel>();
+            CreateMap<Site, SiteViewModel>();
+            CreateMap<Site, UpdateSiteDto>();
+            CreateMap<CreateSiteDto, Site>();
+            CreateMap<UpdateSiteDto, Site>();
         }
     }
 }

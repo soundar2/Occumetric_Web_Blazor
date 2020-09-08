@@ -21,6 +21,15 @@ namespace Occumetric.Server.Areas.Helpers
             _cacheExpirationOptions.AbsoluteExpiration = DateTime.Now.AddDays(1);
         }
 
+        public List<StateViewModel> GetStates()
+        {
+            return _memoryCache.GetOrCreate<List<StateViewModel>>("States",
+          cacheEntry =>
+          {
+              return _mapper.Map<List<StateViewModel>>((from e in _context.States orderby e.Name select e).ToList());
+          });
+        }
+
         public List<EffortTypeViewModel> GetEffortTypes()
         {
             return _memoryCache.GetOrCreate<List<EffortTypeViewModel>>("EffortTypes",

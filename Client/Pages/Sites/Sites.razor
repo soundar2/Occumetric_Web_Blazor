@@ -1,0 +1,70 @@
+﻿@page "/sites/tenant/{TenantId:int}"
+@using Occumetric.Shared
+@inject HttpClient _httpClient
+<h3>Sites</h3>
+<a href="@($"/sites/create/tenant/{TenantId}")" class="btn btn-primary">Create Site</a>
+@if (_siteViewModels.Any())
+{
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>
+                    Site Id
+                </th>
+                <th>
+                    Name
+                </th>
+                <th>
+                    City
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in _siteViewModels)
+            {
+                <tr>
+                    <td>
+                        @item.Id
+                    </td>
+                    <td>
+                        <a href="/sites/@item.Id">@item.Name</a>
+                    </td>
+                    <td>
+                        @item.City
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}
+
+<p>Tenant: @TenantId</p>
+@code {
+    [Parameter] public int TenantId { get; set; }
+    private List<SiteViewModel> _siteViewModels { get; set; } = new List<SiteViewModel>();
+
+    protected async override void OnInitialized()
+    {
+        base.OnInitialized();
+        _siteViewModels = new List<SiteViewModel>();
+        await FetchData();
+
+    }
+    private async Task FetchData()
+    {
+        try
+        {
+
+            _siteViewModels = await _httpClient.GetFromJsonAsync<List<SiteViewModel>>(CommonHttpService.BaseUrl + $"/sites/tenant/{TenantId}");
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Exception");
+            Console.WriteLine(e.Message);
+        }
+    }
+
+}

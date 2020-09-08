@@ -1,0 +1,74 @@
+﻿@page "/sites/update/{SiteId:int}"
+@using Occumetric.Shared
+@inject HttpClient _httpClient
+@inject ICommonHttpService _commonHttpService
+@inject IGlobalsService _globalsService
+<h3>Update Task</h3>
+
+<EditForm Model="_updateSiteDto" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <table class="table table-striped">
+        <tr>
+            <td>
+                Name:
+            </td>
+            <td>
+                <InputText @bind-Value="_updateSiteDto.Name"></InputText>
+            </td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td>
+                <input type="submit" value="Submit" class="btn btn-primary" />
+            </td>
+        </tr>
+    </table>
+</EditForm>
+
+@code {
+    [Parameter] public int SiteId { get; set; }
+    private string message = "This is a message";
+    private UpdateSiteDto _updateSiteDto { get; set; } = new UpdateSiteDto();
+    private List<StateViewModel> _stateViewModels = new List<StateViewModel>();
+
+    protected async override void OnInitialized()
+    {
+        base.OnInitialized();
+        _stateViewModels = await _commonHttpService.GetStates();
+        await FetchData();
+        StateHasChanged();
+    }
+
+    private async Task FetchData()
+    {
+
+        _updateSiteDto = await _httpClient.GetFromJsonAsync<UpdateSiteDto>(CommonHttpService.BaseUrl + $"/sites/updateGet/{SiteId}");
+    }
+
+    private async void OnValidSubmit()
+    {
+        Console.WriteLine("valid submit");
+        try
+        {
+
+            var result = await _commonHttpService.PutGeneric<UpdateSiteDto>("/sites", _updateSiteDto);
+            if (result.result == true)
+            {
+                message = "Success:" + result.message;
+            }
+            else
+            {
+
+                message = "Error:" + result.message;
+            }
+
+        }
+        catch (Exception e)
+        {
+            message = e.Message;
+        }
+        StateHasChanged();
+    }
+
+}

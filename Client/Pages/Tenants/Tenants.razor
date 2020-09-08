@@ -15,6 +15,7 @@
             <tr>
                 <th>Tenant Id</th>
                 <th>Name</th>
+                <th>Sites</th>
                 <th>Jobs</th>
                 <th>Master Tasks</th>
                 <th>Edit</th>
@@ -30,6 +31,9 @@
                     </td>
                     <td>
                         @item.Name
+                    </td>
+                    <td>
+                        <a href=@($"/sites/tenant/{item.Id}")>Sites </a>
                     </td>
                     <td>
                         <a href=@($"/jobs/tenant/{item.Id}")>Jobs </a>

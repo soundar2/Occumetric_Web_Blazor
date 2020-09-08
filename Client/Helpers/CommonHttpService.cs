@@ -46,6 +46,12 @@ namespace Occumetric.Client.Helpers
             return result;
         }
 
+        public async Task<List<StateViewModel>> GetStates()
+        {
+            var result = await _httpClient.GetFromJsonAsync<List<StateViewModel>>(BaseUrl + "/helpers/states");
+            return result;
+        }
+
         public async Task<List<EffortTypeViewModel>> GetEffortTypes()
         {
             var result = await _httpClient.GetFromJsonAsync<List<EffortTypeViewModel>>(BaseUrl + "/helpers/effortTypes");

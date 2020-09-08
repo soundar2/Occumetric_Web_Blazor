@@ -1,26 +1,29 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Occumetric.Shared
 {
-    public class ApplicantViewModel
+    public class CreateApplicantDto
     {
-        public int Id { get; set; }
-
+        [Required]
         public int TenantId { get; set; }
 
-        public string Guid { get; set; }
-
+        [Required]
         public string Fname { get; set; }
 
         public string Mname { get; set; }
 
+        [Required]
         public string Lname { get; set; }
 
+        [Required]
         public string Phone { get; set; }
 
-        public string Email { get; set; }
-
         public DateTime? dob { get; set; }
+        public string Sex { get; set; }
+
+        [Required]
+        public string Email { get; set; }
 
         public string PhotoFileName { get; set; }
 
@@ -29,8 +32,6 @@ namespace Occumetric.Shared
         public string IdCardStateName { get; set; }
 
         public string IdCardNumber { get; set; }
-
-        public string Sex { get; set; }
 
         public bool IsEmployee { get; set; }
 

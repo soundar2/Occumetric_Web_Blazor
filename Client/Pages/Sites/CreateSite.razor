@@ -1,0 +1,114 @@
+﻿@page "/sites/create/tenant/{TenantId:int}"
+@using Occumetric.Shared
+@inject HttpClient _httpClient
+@inject ICommonHttpService _commonHttpService
+<h3>Create Site</h3>
+<h4>TenantId: @TenantId</h4>
+<EditForm Model="_createSiteDto" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <p>@message</p>
+    <table class="table table-striped">
+        <tr>
+            <td>
+                Name:
+            </td>
+            <td>
+                <InputText @bind-Value="_createSiteDto.Name"></InputText>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Address:
+            </td>
+            <td>
+                <InputText @bind-Value="_createSiteDto.Address1"></InputText>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Suite:
+            </td>
+            <td>
+                <InputText @bind-Value="_createSiteDto.Address2"></InputText>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                City:
+            </td>
+            <td>
+                <InputText @bind-Value="_createSiteDto.City"></InputText>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                State:
+            </td>
+            <td>
+                <InputSelect class="form-control required" @bind-Value="@_createSiteDto.State">
+                    @foreach (var item in _stateViewModels)
+                    {
+                        <option value="@item.Name">@item.Name</option>
+                    }
+                </InputSelect>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Zip:
+            </td>
+            <td>
+                <InputText @bind-Value="_createSiteDto.Zip"></InputText>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="submit" value="Submit" class="btn btn-primary" />
+            </td>
+            <td>
+            </td>
+        </tr>
+    </table>
+</EditForm>
+
+@code {
+    [Parameter] public int TenantId { get; set; }
+    private string message = "This is a message";
+    private CreateSiteDto _createSiteDto { get; set; } = new CreateSiteDto();
+    private List<StateViewModel> _stateViewModels = new List<StateViewModel>();
+
+    protected async override void OnInitialized()
+    {
+        base.OnInitialized();
+        _stateViewModels = await _commonHttpService.GetStates();
+        _createSiteDto = new CreateSiteDto();
+        StateHasChanged();
+    }
+
+    private async void OnValidSubmit()
+    {
+        Console.WriteLine("valid submit");
+        try
+        {
+            _createSiteDto.TenantId = this.TenantId;
+
+            var result = await _commonHttpService.PostGeneric<CreateSiteDto>("/sites", _createSiteDto);
+            if (result.result == true)
+            {
+                message = "Success:" + result.message;
+            }
+            else
+            {
+
+                message = "Error:" + result.message;
+            }
+
+        }
+        catch (Exception e)
+        {
+            message = e.Message;
+        }
+        StateHasChanged();
+    }
+
+}

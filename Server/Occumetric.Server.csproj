@@ -7,9 +7,13 @@
 
   <ItemGroup>
     <Compile Remove="Areas\EffortType\**" />
+    <Compile Remove="Areas\Employess\**" />
     <Content Remove="Areas\EffortType\**" />
+    <Content Remove="Areas\Employess\**" />
     <EmbeddedResource Remove="Areas\EffortType\**" />
+    <EmbeddedResource Remove="Areas\Employess\**" />
     <None Remove="Areas\EffortType\**" />
+    <None Remove="Areas\Employess\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,6 +45,7 @@
 
   <ItemGroup>
     <Folder Include="Areas\Reports\" />
+    <Folder Include="Areas\Sites\" />
   </ItemGroup>
 
   <ProjectExtensions>
