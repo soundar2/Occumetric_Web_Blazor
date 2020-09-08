@@ -3,33 +3,86 @@
 @inject HttpClient _httpClient
 @inject ICommonHttpService _commonHttpService
 @inject IGlobalsService _globalsService
+@inject NavigationManager _navigationManager
 <h3>Update Task</h3>
 
-<EditForm Model="_updateSiteDto" OnValidSubmit="OnValidSubmit">
-    <DataAnnotationsValidator />
-    <table class="table table-striped">
-        <tr>
-            <td>
-                Name:
-            </td>
-            <td>
-                <InputText @bind-Value="_updateSiteDto.Name"></InputText>
-            </td>
-        </tr>
-    </table>
-    <table>
-        <tr>
-            <td>
-                <input type="submit" value="Submit" class="btn btn-primary" />
-            </td>
-        </tr>
-    </table>
-</EditForm>
+@if (_updateSiteDto != null)
+{
+    <EditForm Model="_updateSiteDto" OnValidSubmit="OnValidSubmit">
+        <DataAnnotationsValidator />
+        <table class="table table-striped">
+            <tr>
+                <td>
+                    Name:
+                </td>
+                <td>
+                    <InputText @bind-Value="_updateSiteDto.Name"></InputText>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Address:
+                </td>
+                <td>
+                    <InputText @bind-Value="_updateSiteDto.Address1"></InputText>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Suite:
+                </td>
+                <td>
+                    <InputText @bind-Value="_updateSiteDto.Address2"></InputText>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    City:
+                </td>
+                <td>
+                    <InputText @bind-Value="_updateSiteDto.City"></InputText>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    State:
+                </td>
+                <td>
+                    <InputSelect class="form-control required" @bind-Value="@_updateSiteDto.State">
+                        @foreach (var item in _stateViewModels)
+                            {
+                            <option value="@item.Name">@item.Name</option>
+                            }
+                    </InputSelect>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Zip:
+                </td>
+                <td>
+                    <InputText @bind-Value="_updateSiteDto.Zip"></InputText>
+                </td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td>
+                    <input type="submit" value="Submit" class="btn btn-primary" />
+                </td>
+            </tr>
+        </table>
+    </EditForm>
+}
+else
+{
+    <h4>Loading...</h4>
+}
 
 @code {
     [Parameter] public int SiteId { get; set; }
     private string message = "This is a message";
-    private UpdateSiteDto _updateSiteDto { get; set; } = new UpdateSiteDto();
+    private UpdateSiteDto _updateSiteDto { get; set; }
     private List<StateViewModel> _stateViewModels = new List<StateViewModel>();
 
     protected async override void OnInitialized()
@@ -46,21 +99,23 @@
         _updateSiteDto = await _httpClient.GetFromJsonAsync<UpdateSiteDto>(CommonHttpService.BaseUrl + $"/sites/updateGet/{SiteId}");
     }
 
-    private async void OnValidSubmit()
+    private async Task OnValidSubmit()
     {
         Console.WriteLine("valid submit");
         try
         {
+            var response = await _httpClient.PutAsJsonAsync<UpdateSiteDto>(CommonHttpService.BaseUrl + "/sites", _updateSiteDto);
 
-            var result = await _commonHttpService.PutGeneric<UpdateSiteDto>("/sites", _updateSiteDto);
-            if (result.result == true)
+            //var result = await _commonHttpService.PutGeneric<UpdateSiteDto>("/sites", _updateSiteDto);
+            if (response.IsSuccessStatusCode)
             {
-                message = "Success:" + result.message;
+                message = "Success:";
+                _navigationManager.NavigateTo($"/sites/tenant/{_updateSiteDto.TenantId}");
             }
             else
             {
 
-                message = "Error:" + result.message;
+                message = "Error:";
             }
 
         }

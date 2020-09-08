@@ -62,5 +62,13 @@ namespace Occumetric.Server.Areas.Sites
                 Result = "Created"
             });
         }
+
+        [HttpPut]
+        [AllowAnonymous]
+        public async Task<IActionResult> Update(UpdateSiteDto dto)
+        {
+            await Task.Run(() => _siteService.Update(dto));
+            return Ok();
+        }
     } // end class
 }
